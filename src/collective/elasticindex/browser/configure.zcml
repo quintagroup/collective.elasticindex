@@ -1,0 +1,30 @@
+<configure
+   xmlns="http://namespaces.zope.org/zope"
+   xmlns:browser="http://namespaces.zope.org/browser">
+
+  <browser:page
+     for="Products.CMFPlone.interfaces.IPloneSiteRoot"
+     name="elasticindex-settings-controlpanel"
+     class=".settings.ElasticIndexSettings"
+     permission="cmf.ManagePortal"
+     />
+
+  <browser:page
+     name="search.html"
+     for="*"
+     template="search.pt"
+     class=".search.SearchPage"
+     permission="zope.Public"
+     />
+
+ <browser:resource
+    name="search.js"
+    file="search.js"
+    />
+
+ <browser:resource
+    name="search.css"
+    file="search.css"
+    />
+
+</configure>

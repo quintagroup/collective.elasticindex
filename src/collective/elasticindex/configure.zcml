@@ -1,2 +1,70 @@
-<configure>
+<configure
+   xmlns="http://namespaces.zope.org/zope"
+   xmlns:five="http://namespaces.zope.org/five"
+   xmlns:genericsetup="http://namespaces.zope.org/genericsetup">
+
+  <!-- Include dependencies. Define CMF permisions. -->
+  <include package="Products.CMFCore" />
+
+  <five:registerPackage package="." />
+  <genericsetup:registerProfile
+     name="default"
+     title="collective.elasticindex"
+     directory="profiles/default"
+     description="Extension profile for collective.elasticindex."
+     provides="Products.GenericSetup.interfaces.EXTENSION" />
+  <adapter
+     for="Products.CMFPlone.interfaces.IPloneSiteRoot"
+     factory=".settings.SettingsAdapter"
+     provides=".interfaces.IElasticSettings" />
+
+
+  <!-- Content modified -->
+  <subscriber
+     handler=".subscribers.content_modified"
+     for="Products.CMFCore.interfaces.IContentish
+          OFS.interfaces.IObjectClonedEvent"
+     />
+  <subscriber
+     handler=".subscribers.content_modified"
+     for="Products.CMFCore.interfaces.IContentish
+          zope.lifecycleevent.interfaces.IObjectModifiedEvent"
+     />
+  <subscriber
+     handler=".subscribers.content_modified"
+     for="Products.CMFCore.interfaces.IFolderish
+          OFS.interfaces.IObjectClonedEvent"
+     />
+  <subscriber
+     handler=".subscribers.content_modified"
+     for="Products.CMFCore.interfaces.IFolderish
+          zope.lifecycleevent.interfaces.IObjectModifiedEvent"
+     />
+
+  <!-- Content added -->
+  <subscriber
+     handler=".subscribers.content_added"
+     for="Products.CMFCore.interfaces.IContentish
+          zope.container.interfaces.IObjectAddedEvent"
+     />
+  <subscriber
+     handler=".subscribers.content_added"
+     for="Products.CMFCore.interfaces.IFolderish
+          zope.container.interfaces.IObjectAddedEvent"
+     />
+
+
+  <!-- Content added -->
+  <subscriber
+     handler=".subscribers.content_deleted"
+     for="Products.CMFCore.interfaces.IContentish
+          zope.container.interfaces.IObjectRemovedEvent"
+     />
+  <subscriber
+     handler=".subscribers.content_deleted"
+     for="Products.CMFCore.interfaces.IFolderish
+          zope.container.interfaces.IObjectRemovedEvent"
+     />
+  <include package=".browser" />
+
 </configure>
