@@ -32,8 +32,7 @@
                                     entry._source.title + '</a></li>');
                         };
                     },
-                    data: JSON.stringify(query),
-                    async: false
+                    data: JSON.stringify(query)
                 });
             };
 

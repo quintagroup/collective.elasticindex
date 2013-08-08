@@ -30,8 +30,7 @@ def connect(urls):
         raise ValueError('Cannot connect to servers')
 
 
-def create_index(portal):
-    settings = IElasticSettings(portal)
+def create_index(settings):
     connection = connect(settings.server_urls)
     connection.indices.create_index_if_missing(settings.index_name)
     connection.indices.put_mapping(

@@ -19,7 +19,7 @@ class ElasticIndexSettings(ControlPanelForm):
 
     @form.action('Create index', name='create_index')
     def create_index(self, action, data):
-        create_index(self.context)
+        create_index(IElasticSettings(self.context))
 
 
     @form.action('Import site content', name='import_content')
