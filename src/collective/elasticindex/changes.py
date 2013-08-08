@@ -2,7 +2,7 @@
 from Products.CMFCore.interfaces import IFolderish, IContentish
 from Products.CMFPlone.interfaces.siteroot import IPloneSiteRoot
 from transaction.interfaces import ISavepointDataManager, IDataManagerSavepoint
-from zope.component import getUtility
+from zope.component import queryUtility
 from zope.interface import implements
 import threading
 import transaction
@@ -84,12 +84,17 @@ class ElasticChanges(threading.local):
 
     def _follow(self):
         if self._settings is None:
-            self._settings = IElasticSettings(getUtility(IPloneSiteRoot))
+            portal = queryUtility(IPloneSiteRoot)
+            if portal is None:
+                return False
+            self._settings = IElasticSettings(portal)
             transaction = self.manager.get()
             transaction.join(self)
+        return True
 
     def index_content(self, content, recursive=False):
-        self._follow()
+        if not self._follow():
+            return
         if recursive:
             items = list_content(content)
         else:
@@ -102,7 +107,8 @@ class ElasticChanges(threading.local):
                 self._index[uid] = data
 
     def unindex_content(self, content):
-        self._follow()
+        if not self._follow():
+            return
         uid = get_uid(content)
         if uid in self._index:
             del self._index[uid]
