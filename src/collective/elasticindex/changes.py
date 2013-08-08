@@ -81,6 +81,7 @@ class ElasticChanges(threading.local):
         self._unindex = set()
         self._settings = None
         self._connection = None
+        self._activated = False
 
     def _follow(self):
         if self._settings is None:
@@ -88,9 +89,11 @@ class ElasticChanges(threading.local):
             if portal is None:
                 return False
             self._settings = IElasticSettings(portal)
-            transaction = self.manager.get()
-            transaction.join(self)
-        return True
+            self._activated = self._settings.activated
+            if self._activated:
+                transaction = self.manager.get()
+                transaction.join(self)
+        return self._activated
 
     def index_content(self, content, recursive=False):
         if not self._follow():
