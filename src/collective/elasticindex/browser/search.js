@@ -13,7 +13,14 @@
                 // Form up any query here
                 var query = {
                     query: {
-                        term: { content: term }
+                        multi_match : {
+                            query  : term,
+                            fields : [
+                                "content",
+                                "title^2",
+                                "subject^2"
+                            ] 
+                        }
                     }
                 };
                 $.ajax({
@@ -25,11 +32,11 @@
                         var entry, i;
 
                         $result.empty();
-                        for (i=0; i < data.hits.total; i++) {
+                        for (var i=0, j = data.hits.total; i < j; i++) {
                             entry = data.hits.hits[i];
                             $result.append(
-                                '<li><a href="' + entry._source.url + '">' +
-                                    entry._source.title + '</a></li>');
+                                '<li><a href="' + entry.url + '">' +
+                                    entry.title + '</a></li>');
                         };
                     },
                     data: JSON.stringify(query)
@@ -47,13 +54,13 @@
                     timeout = null;
 
                 var search = function() {
-                    if (timeout != null) {
+                    if (timeout !== null) {
                         clearTimeout(timeout);
                     };
                     timeout = setTimeout(function () {
                         var term = $input.attr('value');
 
-                        if (term != previous) {
+                        if (term !== previous) {
                             query(get_url(), term);
                             previous = term;
                         };
