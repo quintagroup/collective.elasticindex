@@ -34,9 +34,19 @@ def get_data(content):
         text = content.SearchableText()
     except:
         text = title
-    return uid, {'title': title,
-                 'url': content.absolute_url(),
-                 'content': text}
+    data = {'title': title,
+            'description': content.Description(),
+            'subject': ' '.join(content.Subject()),
+            'url': content.absolute_url(),
+            'author': ' '.join(content.listCreators()),
+            'content': text}
+    created = content.created()
+    if created is not (None, 'None'):
+        data['created'] = created.strftime('%Y-%m-%dT%H:%M:%S')
+    modified = content.modified()
+    if modified is not (None, 'None'):
+        data['modified'] = modified.strftime('%Y-%m-%dT%H:%M:%S')
+    return uid, data
 
 def list_content(content):
     """Recursively list CMF content out of the given one.

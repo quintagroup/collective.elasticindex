@@ -1,4 +1,4 @@
 
-.es-search-form li {
-  display: block;
+.esSearchForm .searchResults {
+  display: none;
 }

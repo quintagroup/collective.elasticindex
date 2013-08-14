@@ -3,23 +3,27 @@
     // Hang on in there. We have jQuery, 1.4.
 
     $(document).ready(function() {
-        $('.es-search-form').each(function() {
-            var $page = $(this),
-                $result = $page.find('.es-search-results'),
-                search_urls = $page.data('server-urls'),
-                index_name = $page.data('index-name');
+        $('.esSearchForm').each(function() {
+            var $form = $(this),
+                $count = $form.find('span.searchResultsCount'),
+                $empty = $form.find('div.emptySearchResults'),
+                $result = $form.find('dl.searchResults'),
+                search_urls = $form.data('server-urls'),
+                index_name = $form.data('index-name');
 
-            function query(url, term) {
+            var query = function(url, term) {
                 // Form up any query here
                 var query = {
                     query: {
                         multi_match : {
                             query  : term,
                             fields : [
-                                "content",
+                                "author^2",
                                 "title^2",
-                                "subject^2"
-                            ] 
+                                "subject^2",
+                                "description",
+                                "content"
+                            ]
                         }
                     }
                 };
@@ -29,14 +33,24 @@
                     crossDomain: true,
                     dataType: 'json',
                     success: function(data) {
-                        var entry, i;
+                        var entry, i, len;
 
+                        $count.text(data.hits.total);
                         $result.empty();
-                        for (var i=0, j = data.hits.total; i < j; i++) {
-                            entry = data.hits.hits[i];
-                            $result.append(
-                                '<li><a href="' + entry.url + '">' +
-                                    entry.title + '</a></li>');
+                        if (!data.hits.total) {
+                            $empty.show();
+                            $result.hide();
+                        } else {
+                            $empty.hide();
+                            $result.show();
+                            for (i=0; i < data.hits.total; i++) {
+                                entry = data.hits.hits[i];
+                                $result.append(
+                                    '<dt class="contenttype-document"><a href="'
+                                        + entry._source.url + '">' + entry._source.title +
+                                        '</a></dt><dd>' + entry._source.description + '</dd>'
+                                );
+                            };
                         };
                     },
                     data: JSON.stringify(query)
@@ -48,32 +62,35 @@
                 return [search_urls[index], '/', index_name, '/_search'].join('');
             };
 
-            $page.find('input').each(function() {
-                var $input = $(this),
-                    previous = null,
-                    timeout = null;
+            var $field = $form.find('input[type=text]'),
+                $button = $form.find('input[type=submit]'),
+                previous = null,
+                timeout = null;
 
-                var search = function() {
-                    if (timeout !== null) {
-                        clearTimeout(timeout);
+            var schedule_search = function() {
+                if (timeout !== null) {
+                    clearTimeout(timeout);
+                };
+                timeout = setTimeout(function () {
+                    var term = $field.attr('value');
+
+                    if (term != previous) {
+                        query(get_url(), term);
+                        previous = term;
                     };
-                    timeout = setTimeout(function () {
-                        var term = $input.attr('value');
+                    timeout = null;
+                }, 500);
+            };
 
-                        if (term !== previous) {
-                            query(get_url(), term);
-                            previous = term;
-                        };
-                        timeout = null;
-                    }, 500);
-                };
-
-                $input.bind('change', search);
-                $input.bind('keypress', search);
-                if ($input.attr('value')) {
-                    search();
-                };
+            $button.bind('click', function(event) {
+                schedule_search();
+                event.preventDefault();
             });
+            $field.bind('change', schedule_search);
+            $field.bind('keypress', schedule_search);
+            if ($field.attr('value')) {
+                schedule_search();
+            };
 
         });
     });
