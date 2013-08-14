@@ -25,7 +25,14 @@
                                 "content"
                             ]
                         }
-                    }
+                    },
+                    highlight: {
+                        fields: {
+                            title: {number_of_fragments: 0},
+                            description: {fragment_size: 150, number_of_fragments: 3}
+                        }
+                    },
+                    fields: ['url', 'title', 'description']
                 };
                 $.ajax({
                     url: url,
@@ -34,6 +41,7 @@
                     dataType: 'json',
                     success: function(data) {
                         var entry, i, len;
+                        var title, description, url;
 
                         $count.text(data.hits.total);
                         $result.empty();
@@ -45,10 +53,12 @@
                             $result.show();
                             for (i=0; i < data.hits.total; i++) {
                                 entry = data.hits.hits[i];
+                                title = (entry.highlight && entry.highlight.title) || entry.fields.title;
+                                description = (entry.highlight && entry.highlight.description) || entry.fields.description;
+                                url = entry.fields.url;
                                 $result.append(
                                     '<dt class="contenttype-document"><a href="'
-                                        + entry._source.url + '">' + entry._source.title +
-                                        '</a></dt><dd>' + entry._source.description + '</dd>'
+                                        + url + '">' + title + '</a></dt><dd>' + description + '</dd>'
                                 );
                             };
                         };

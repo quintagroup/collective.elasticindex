@@ -1,4 +1,8 @@
 
+
+.esSearchForm .searchResults em {
+  background-color: #FFFFAA;
+}
 .esSearchForm .searchResults {
   display: none;
 }
