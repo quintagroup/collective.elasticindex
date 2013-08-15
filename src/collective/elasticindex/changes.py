@@ -141,7 +141,7 @@ class ElasticChanges(threading.local):
             content, 'review_state', default='nope') == 'published'
 
     def should_index_container(self, contents):
-        if not self._is_activated():
+        if self._is_activated():
             for content in contents:
                 if (self._get_status is None or
                     self._get_status(
