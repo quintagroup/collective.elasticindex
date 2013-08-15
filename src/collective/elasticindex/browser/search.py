@@ -13,6 +13,8 @@ class SearchPage(BrowserView):
         self.server_urls = json.dumps(list(settings.server_urls))
         self.index_name = settings.index_name
         self.request.set('disable_border', 1)
+        self.request.set('disable_plone.leftcolumn', 1)
+        self.request.set('disable_plone.rightcolumn', 1)
 
     def __call__(self):
         self.update()

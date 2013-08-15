@@ -8,7 +8,6 @@ def content_added(content, event):
     if factorytool in content.aq_chain:
         return
     if changes.should_index_content(content):
-        print 'added or moved index'
         changes.index_content(content)
 
 
@@ -17,14 +16,12 @@ def content_modified(content, event):
     if factorytool in content.aq_chain:
         return
     if changes.should_index_content(content):
-        print 'modified index'
         changes.index_content(content)
 
 
 def content_deleted(content, event):
     if event.newParent is None:
         if changes.should_index_content(content):
-            print 'deleted unindex'
             changes.unindex_content(content)
 
 
@@ -34,10 +31,7 @@ def content_published(content, event):
     if (event.old_state.getId() == 'published' and
         event.new_state.getId() != 'published'):
         changes.unindex_content(content)
-        print 'unpublished'
-        #changes.unindex_content(content)
     elif (event.new_state.getId() == 'published' and
           event.old_state.getId() != 'published'):
         changes.index_content(content)
-        print 'published'
 

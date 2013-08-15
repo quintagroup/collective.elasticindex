@@ -1,91 +1,177 @@
 
 (function($) {
     // Hang on in there. We have jQuery, 1.4.
+    var BATCH_SIZE = 10;
 
-    $(document).ready(function() {
-        $('.esSearchForm').each(function() {
-            var $form = $(this),
-                $count = $form.find('span.searchResultsCount'),
-                $empty = $form.find('div.emptySearchResults'),
-                $result = $form.find('dl.searchResults'),
-                search_urls = $form.data('server-urls'),
-                index_name = $form.data('index-name');
+    var ElasticSearch = function($form) {
+        var search_urls = $form.data('server-urls'),
+            index_name = $form.data('index-name');
+        var empty_results = [],
+            results = [];
+        var previous_query = null,
+            start_from = 0;
 
-            var query = function(url, term) {
-                // Form up any query here
-                var query = {
-                    query: {
-                        multi_match : {
-                            query  : term,
-                            fields : [
-                                "author^2",
-                                "title^2",
-                                "subject^2",
-                                "description",
-                                "content"
-                            ]
-                        }
-                    },
-                    highlight: {
+        var get_url = function() {
+            var index = Math.floor(Math.random() * search_urls.length);
+            return [search_urls[index], '/', index_name, '/_search'].join('');
+        };
+
+        var build_query = function(term) {
+            return {
+                size: BATCH_SIZE,
+                query: {
+                    multi_match : {
+                        query  : term,
+                        fields : [
+                            "author^2",
+                            "title^3",
+                            "subject^2",
+                            "description",
+                            "content"
+                        ]
+                    }
+                },
+                highlight: {
                         fields: {
                             title: {number_of_fragments: 0},
                             description: {fragment_size: 150, number_of_fragments: 3}
                         }
                     },
-                    fields: ['url', 'title', 'description']
+                fields: ['url', 'title', 'description']
+            };
+        };
+
+        var do_search = function(query, from) {
+            // Form up any query here
+            if (from) {
+                query['from'] = from;
+            };
+            $.ajax({
+                url: get_url(),
+                type: 'POST',
+                crossDomain: true,
+                dataType: 'json',
+                success: function(data) {
+                    var notifies = data.hits.total ? results : empty_results;
+                    for (var i=0, len=notifies.length; i < len; i++) {
+                        notifies[i](data.hits);
+                    }
+                },
+                data: JSON.stringify(query)
+            });
+            return query;
+        };
+
+        return {
+            subscribe: function(plugin) {
+                if (plugin.onempty !== undefined) {
+                    empty_results.push(plugin.onempty);
                 };
-                $.ajax({
-                    url: url,
-                    type: 'POST',
-                    crossDomain: true,
-                    dataType: 'json',
-                    success: function(data) {
-                        var entry, i, len;
-                        var title, description, url;
+                if (plugin.onresult !== undefined) {
+                    results.push(plugin.onresult);
+                };
+            },
+            scroll: function(index) {
+                if (previous_query !== null) {
+                    do_search(previous_query, index);
+                };
+            },
+            search: function(term) {
+                previous_query = do_search(build_query(term));
+            }
+        };
+    };
 
-                        $count.text(data.hits.total);
-                        $result.empty();
-                        if (!data.hits.total) {
-                            $empty.show();
-                            $result.hide();
-                        } else {
-                            $empty.hide();
-                            $result.show();
-                            for (i=0; i < data.hits.total; i++) {
-                                entry = data.hits.hits[i];
-                                title = (entry.highlight && entry.highlight.title) || entry.fields.title;
-                                description = (entry.highlight && entry.highlight.description) || entry.fields.description;
-                                url = entry.fields.url;
-                                $result.append(
-                                    '<dt class="contenttype-document"><a href="'
-                                        + url + '">' + title + '</a></dt><dd>' + description + '</dd>'
-                                );
-                            };
-                        };
-                    },
-                    data: JSON.stringify(query)
-                });
-            };
+    var CountDisplayPlugin = function($count) {
+        return {
+            onempty: function() {
+                $count.text('0');
+            },
+            onresult: function(data) {
+                $count.text(data.total);
+            }
+        };
+    };
 
-            var get_url = function() {
-                var index = Math.floor(Math.random() * search_urls.length);
-                return [search_urls[index], '/', index_name, '/_search'].join('');
-            };
+    var ResultDisplayPlugin = function($result, $empty) {
+        return {
+            onempty: function() {
+                $result.hide();
+                $empty.show();
+            },
+            onresult: function(data) {
+                var entry, i, len;
+                var title, description, url;
+
+                $empty.hide();
+                $result.empty();
+                $result.show();
+                for (i=0, len=data.hits.length; i < len; i++) {
+                    entry = data.hits[i];
+                    title = (entry.highlight && entry.highlight.title) || entry.fields.title;
+                    description = (entry.highlight && entry.highlight.description) || entry.fields.description;
+                    url = entry.fields.url;
+                    $result.append(
+                        '<dt class="contenttype-document"><a href="'
+                            + url + '">' + title + '</a></dt><dd>' + description + '</dd>'
+                    );
+                };
+            }
+        };
+    };
+
+    var BatchDisplayPlugin = function($batch, update) {
+        return {
+            onempty: function() {
+                $batch.hide();
+            },
+            onresult: function(data) {
+                if (data.total < BATCH_SIZE) {
+                    $batch.hide();
+                } else {
+                    var count = Math.ceil(Math.min(data.total / BATCH_SIZE, 10)),
+                        index = 0;
+                    $batch.empty();
+                    while(count--) {
+                        (function (index) {
+                            // The function escape index here.
+                            var $link = $('<a>' + index + '</a>');
+                            $link.bind('click', function() {
+                                update(index);
+                            });
+                            $batch.append($link);
+                        })(index);
+                        index += BATCH_SIZE;
+                    };
+                    $batch.show();
+                };
+            }
+        };
+    };
+
+    $(document).ready(function() {
+        $('.esSearchForm').each(function() {
+            var $form = $(this),
+                search = ElasticSearch($form);
 
             var $field = $form.find('input[type=text]'),
                 $button = $form.find('input[type=submit]'),
                 previous = null,
                 timeout = null;
 
-            var schedule_search = function() {
+            search.subscribe(CountDisplayPlugin($form.find('span.searchResultsCount')));
+            search.subscribe(ResultDisplayPlugin($form.find('dl.searchResults'), $form.find('div.emptySearchResults')));
+            search.subscribe(BatchDisplayPlugin($form.find('div.listingBar'), search.scroll));
+
+            var schedule_search = function(force) {
                 if (timeout !== null) {
                     clearTimeout(timeout);
                 };
                 timeout = setTimeout(function () {
                     var term = $field.attr('value');
 
-                    if (term != previous) {
-                        query(get_url(), term);
+                    if (force || term != previous) {
+                        search.search(term);
                         previous = term;
                     };
                     timeout = null;
@@ -93,7 +179,7 @@
             };
 
             $button.bind('click', function(event) {
-                schedule_search();
+                schedule_search(true);
                 event.preventDefault();
             });
             $field.bind('change', schedule_search);

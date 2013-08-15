@@ -44,6 +44,8 @@
           </h1>
           <dl class="searchResults">
           </dl>
+          <div class="listingBar">
+          </div>
 
           <div class="emptySearchResults">
             <p><strong i18n:translate="description_no_results_found">
