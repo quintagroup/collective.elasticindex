@@ -54,7 +54,7 @@
                 success: function(data) {
                     var notifies = data.hits.total ? results : empty_results;
                     for (var i=0, len=notifies.length; i < len; i++) {
-                        notifies[i](data.hits);
+                        notifies[i](data.hits, from || 0);
                     }
                 },
                 data: JSON.stringify(query)
@@ -125,22 +125,31 @@
             onempty: function() {
                 $batch.hide();
             },
-            onresult: function(data) {
+            onresult: function(data, current) {
                 if (data.total < BATCH_SIZE) {
                     $batch.hide();
                 } else {
                     var count = Math.ceil(Math.min(data.total / BATCH_SIZE, 10)),
+                        page = 1,
                         index = 0;
                     $batch.empty();
                     while(count--) {
                         (function (index) {
                             // The function escape index here.
-                            var $link = $('<a>' + index + '</a>');
+                            var $link = $('<a>' + page + '</a> '),
+                                $insert = $link;
+
+                            if (current == index) {
+                                $insert = $('<span class="current"></span>');
+                                $insert.append($link);
+                            };
                             $link.bind('click', function() {
                                 update(index);
                             });
-                            $batch.append($link);
+                            $batch.append($insert);
+                            $batch.append(' ');
                         })(index);
+                        page += 1;
                         index += BATCH_SIZE;
                     };
                     $batch.show();
