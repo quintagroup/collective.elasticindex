@@ -5,6 +5,7 @@ from zope.component import getUtility
 
 
 class EmptySettings(object):
+    only_published = True
     index_name = None
     server_urls = []
 
@@ -25,6 +26,18 @@ class SettingsAdapter(object):
     @property
     def activated(self):
         return self._activated
+
+    @apply
+    def only_published():
+
+        def getter(self):
+            return bool(self._properties.only_published)
+
+        def setter(self, value):
+            self._properties.only_published = bool(value)
+            return value
+
+        return property(getter, setter)
 
     @apply
     def index_name():

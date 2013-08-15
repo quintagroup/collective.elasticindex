@@ -4,21 +4,40 @@ from Products.CMFCore.utils import getToolByName
 
 
 def content_added(content, event):
-    factorytool = getToolByName(content, 'portal_factory', None)
+    factorytool = getToolByName(content, 'portal_factory')
     if factorytool in content.aq_chain:
         return
-    changes.index_content(content)
+    if changes.should_index_content(content):
+        print 'added or moved index'
+        changes.index_content(content)
 
 
 def content_modified(content, event):
-    factorytool = getToolByName(content, 'portal_factory', None)
+    factorytool = getToolByName(content, 'portal_factory')
     if factorytool in content.aq_chain:
         return
-    changes.index_content(content)
+    if changes.should_index_content(content):
+        print 'modified index'
+        changes.index_content(content)
 
 
 def content_deleted(content, event):
     if event.newParent is None:
-        changes.unindex_content(content)
+        if changes.should_index_content(content):
+            print 'deleted unindex'
+            changes.unindex_content(content)
 
+
+def content_published(content, event):
+    if not changes.only_published:
+        return
+    if (event.old_state.getId() == 'published' and
+        event.new_state.getId() != 'published'):
+        changes.unindex_content(content)
+        print 'unpublished'
+        #changes.unindex_content(content)
+    elif (event.new_state.getId() == 'published' and
+          event.old_state.getId() != 'published'):
+        changes.index_content(content)
+        print 'published'
 

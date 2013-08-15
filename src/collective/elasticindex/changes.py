@@ -1,5 +1,6 @@
 
 from Products.CMFCore.interfaces import IFolderish, IContentish
+from Products.CMFCore.utils import getToolByName
 from Products.CMFPlone.interfaces.siteroot import IPloneSiteRoot
 from transaction.interfaces import ISavepointDataManager, IDataManagerSavepoint
 from zope.component import queryUtility
@@ -48,8 +49,9 @@ def get_data(content):
         data['modified'] = modified.strftime('%Y-%m-%dT%H:%M:%S')
     return uid, data
 
-def list_content(content):
-    """Recursively list CMF content out of the given one.
+def list_content(content, callback):
+    """Recursively list CMF content out of the given one. ``callback``
+    is called every thousand items after a commit.
     """
 
     def recurse(content):
@@ -59,9 +61,16 @@ def list_content(content):
                     yield grandchild
             yield child
 
+    count = 0
     if IFolderish.providedBy(content):
         for child in recurse(content):
             yield child
+            count += 1
+            if count > 1000:
+                transaction.commit()
+                content._p_jar.cacheGC()
+                callback()
+                count = 0
         yield content
     elif IContentish.providedBy(content):
         yield content
@@ -91,36 +100,76 @@ class ElasticChanges(threading.local):
         self._unindex = set()
         self._settings = None
         self._connection = None
-        self._activated = False
+        self._activated = None
+        self._get_status = None
 
-    def _follow(self):
+    def _get_settings(self):
         if self._settings is None:
             portal = queryUtility(IPloneSiteRoot)
             if portal is None:
-                return False
+                return None
             self._settings = IElasticSettings(portal)
-            self._activated = self._settings.activated
+            if self._settings.only_published:
+                self._get_status = getToolByName(
+                    portal, 'portal_workflow').getInfoFor
+        return self._settings
+
+    @property
+    def only_published(self):
+        settings = self._get_settings()
+        if settings is None:
+            return False
+        return self._settings.only_published
+
+    def _is_activated(self):
+        if self._activated is None:
+            settings = self._get_settings()
+            if settings is None:
+                return False
+            self._activated = bool(settings.activated)
             if self._activated:
                 transaction = self.manager.get()
                 transaction.join(self)
-        return self._activated
+        return bool(self._activated)
 
-    def index_content(self, content, recursive=False):
-        if not self._follow():
+    def should_index_content(self, content):
+        if not self._is_activated():
+            return False
+        if self._get_status is None:
+            return True
+        return self._get_status(
+            content, 'review_state', default='nope') == 'published'
+
+    def should_index_container(self, contents):
+        if not self._is_activated():
+            for content in contents:
+                if (self._get_status is None or
+                    self._get_status(
+                        content, 'review_state', default='nope') == 'published'):
+                    yield content
+
+    def verify_and_index_container(self, content):
+        if not self._is_activated():
             return
-        if recursive:
-            items = list_content(content)
-        else:
-            items = [content]
-        for item in items:
+        for item in self.should_index_container(
+            list_content(content, self._is_activated)):
             uid, data = get_data(item)
             if data:
                 if uid in self._unindex:
                     del self._unindex[uid]
                 self._index[uid] = data
 
+    def index_content(self, content):
+        if not self._is_activated():
+            return
+        uid, data = get_data(content)
+        if data:
+            if uid in self._unindex:
+                del self._unindex[uid]
+            self._index[uid] = data
+
     def unindex_content(self, content):
-        if not self._follow():
+        if not self._is_activated():
             return
         uid = get_uid(content)
         if uid in self._index:
@@ -143,16 +192,19 @@ class ElasticChanges(threading.local):
         pass
 
     def tpc_vote(self, transaction):
-        if self._index or self._unindex and self._settings.server_urls:
-            self._connection = connect(self._settings.server_urls)
+        if self._index or self._unindex:
+            settings = self._get_settings()
+            if settings.server_urls:
+                self._connection = connect(settings.server_urls)
 
     def tpc_finish(self, transaction):
         if self._connection is not None:
+            settings = self._get_settings()
             for uid, data in self._index.iteritems():
                 try:
                     self._connection.index(
                         data,
-                        self._settings.index_name,
+                        settings.index_name,
                         'document',
                         id=uid,
                         bulk=True)
@@ -162,7 +214,7 @@ class ElasticChanges(threading.local):
             for uid in self._unindex:
                 try:
                     self._connection.delete(
-                        self._settings.index_name,
+                        settings.index_name,
                         'document',
                         uid,
                         bulk=True)

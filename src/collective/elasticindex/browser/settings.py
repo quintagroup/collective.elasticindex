@@ -24,7 +24,7 @@ class ElasticIndexSettings(ControlPanelForm):
 
     @form.action('Import site content', name='import_content')
     def import_site_content(self, action, data):
-        changes.index_content(self.context, recursive=True)
+        changes.verify_and_index_container(self.context)
 
     actions += form.Actions(*list(ControlPanelForm.actions))
 

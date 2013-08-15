@@ -19,6 +19,18 @@
      provides=".interfaces.IElasticSettings" />
 
 
+  <!-- Content published -->
+  <subscriber
+     handler=".subscribers.content_published"
+     for="Products.CMFCore.interfaces.IContentish
+          Products.DCWorkflow.interfaces.IAfterTransitionEvent"
+     />
+  <subscriber
+     handler=".subscribers.content_published"
+     for="Products.CMFCore.interfaces.IFolderish
+          Products.DCWorkflow.interfaces.IAfterTransitionEvent"
+     />
+
   <!-- Content modified -->
   <subscriber
      handler=".subscribers.content_modified"
@@ -53,17 +65,16 @@
           zope.container.interfaces.IObjectAddedEvent"
      />
 
-
-  <!-- Content added -->
+  <!-- Content removed -->
   <subscriber
      handler=".subscribers.content_deleted"
      for="Products.CMFCore.interfaces.IContentish
-          zope.container.interfaces.IObjectRemovedEvent"
+          OFS.interfaces.IObjectWillBeRemovedEvent"
      />
   <subscriber
      handler=".subscribers.content_deleted"
      for="Products.CMFCore.interfaces.IFolderish
-          zope.container.interfaces.IObjectRemovedEvent"
+          OFS.interfaces.IObjectWillBeRemovedEvent"
      />
   <include package=".browser" />
 
