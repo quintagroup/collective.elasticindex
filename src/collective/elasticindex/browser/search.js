@@ -168,9 +168,13 @@
                 previous = null,
                 timeout = null;
 
-            search.subscribe(CountDisplayPlugin($form.find('span.searchResultsCount')));
-            search.subscribe(ResultDisplayPlugin($form.find('dl.searchResults'), $form.find('div.emptySearchResults')));
-            search.subscribe(BatchDisplayPlugin($form.find('div.listingBar'), search.scroll));
+            var scroll_search = function(index) {
+                if (timeout !== null) {
+                    clearTimeout(timeout);
+                    timeout = null;
+                };
+                search.scroll(index);
+            };
 
             var schedule_search = function(force) {
                 if (timeout !== null) {
@@ -186,6 +190,10 @@
                     timeout = null;
                 }, 500);
             };
+
+            search.subscribe(CountDisplayPlugin($form.find('span.searchResultsCount')));
+            search.subscribe(ResultDisplayPlugin($form.find('dl.searchResults'), $form.find('div.emptySearchResults')));
+            search.subscribe(BatchDisplayPlugin($form.find('div.listingBar'), scroll_search));
 
             $button.bind('click', function(event) {
                 schedule_search(true);
