@@ -11,7 +11,7 @@ ANALYZED_STRING_MAPPING = {
 STRING_MAPPING = {
     'index': 'not_analyzed',
     'type': 'string',
-    'store': 'yes',
+    'store': 'no',
 }
 
 DATE_MAPPING = {
@@ -24,14 +24,12 @@ DOCUMENT_MAPPING = {
     '_index': {
         'enabled': True
     },
+    # Stored
     '_id' : {
         'index': 'not_analyzed',
         'type': 'string',
         'store': 'yes'
     },
-
-    'site': STRING_MAPPING,
-
     'title': ANALYZED_STRING_MAPPING,
     'subject': ANALYZED_STRING_MAPPING,
     'description': ANALYZED_STRING_MAPPING,
@@ -40,8 +38,10 @@ DOCUMENT_MAPPING = {
     'author': ANALYZED_STRING_MAPPING,
     'contributors': ANALYZED_STRING_MAPPING,
 
+    # Not stored
     'created': DATE_MAPPING,
-    'modified': DATE_MAPPING
+    'modified': DATE_MAPPING,
+    'sortableTitle': STRING_MAPPING,
 }
 
 def parse_url(url):

@@ -32,7 +32,7 @@
                 }],
                 query;
             if (original.author !== undefined) {
-                queries.push({field: {author: original.author}});
+                queries.push({match: {author: original.author}});
             };
             if (queries.length > 1) {
                 query = {bool: {must: queries}};
@@ -41,6 +41,7 @@
             };
             return {
                 size: BATCH_SIZE,
+                sort: ["_score"],
                 query: query,
                 highlight: {
                         fields: {

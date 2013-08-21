@@ -22,7 +22,8 @@
           <form class="searchPage">
             <input type="text" placeholder="Search ..." class="searchPage"
                    title="Search Site"
-                   i18n:attributes="title title_search_title;"/>
+                   i18n:attributes="title title_search_title"
+                   tal:attributes="value request/SearchableText | nothing"/>
             <input class="searchPage searchButton allowMultiSubmit"
                    type="submit"
                    value="Search"

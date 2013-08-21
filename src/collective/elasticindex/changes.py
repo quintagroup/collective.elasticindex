@@ -36,6 +36,7 @@ def get_data(content):
     except:
         text = title
     data = {'title': title,
+            'sortableTitle': title,
             'description': content.Description(),
             'subject': ' '.join(content.Subject()),
             'contributors': ' '.join(content.Contributors()),
