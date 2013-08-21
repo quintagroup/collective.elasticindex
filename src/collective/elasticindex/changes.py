@@ -1,19 +1,28 @@
 
 from Products.CMFCore.interfaces import IFolderish, IContentish
 from Products.CMFCore.utils import getToolByName
+from Products.CMFPlone.utils import safe_unicode
 from Products.CMFPlone.interfaces.siteroot import IPloneSiteRoot
 from transaction.interfaces import ISavepointDataManager, IDataManagerSavepoint
+from plone.i18n.normalizer.base import mapUnicode
 from zope.component import queryUtility
 from zope.interface import implements
 import threading
 import transaction
 import logging
+import re
 
 from collective.elasticindex.interfaces import IElasticSettings
 from collective.elasticindex.utils import connect
 
 logger = logging.getLogger('collective.elasticindex')
 
+num_sort_regex = re.compile('\d+')
+
+def sortable_string(string):
+    return num_sort_regex.sub(
+        lambda m: m.group().zfill(6),
+        mapUnicode(safe_unicode(string)).lower().strip())
 
 def get_uid(content):
     """Return content identifier to use in ES.
@@ -36,7 +45,7 @@ def get_data(content):
     except:
         text = title
     data = {'title': title,
-            'sortableTitle': title,
+            'sortableTitle': sortable_string(title),
             'description': content.Description(),
             'subject': ' '.join(content.Subject()),
             'contributors': ' '.join(content.Contributors()),
