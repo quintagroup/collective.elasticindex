@@ -157,6 +157,7 @@
                 if (opt.current) {
                     var $current = $('<span class="current"></span>');
                     $current.append($link);
+                    $current.bind('click', function () { return false });
                     return $current;
                 } 
 
