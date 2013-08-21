@@ -100,6 +100,31 @@
                   Match all
                 </label>
               </div>
+
+              <div class="field">
+                <label for="sort_on" i18n:translate="">Sort results</label>
+
+                <div class="formHelp" i18n:translate="">
+                  Sort the Search Results based on the selected criterion
+                </div>
+
+                <select name="sort_on"
+                        id="sort_on">
+                  <option value="" i18n:translate="">
+                    Relevance
+                  </option>
+                  <option value="created" i18n:translate="">
+                    Creation Date
+                  </option>
+                  <option value="modified" i18n:translate="">
+                    Modification Date
+                  </option>
+                  <option value="title" i18n:translate="">
+                    Title
+                  </option>
+                </select>
+              </div>
+
             </div>
           </form>
 

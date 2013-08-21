@@ -30,9 +30,17 @@
                         ]
                     }
                 }],
-                query;
-            if (original.author !== undefined) {
-                queries.push({match: {author: original.author}});
+                query,
+                sort = {};
+            if (original.sort == 'created' || original.sort == 'modified') {
+                sort[original.sort] = 'desc';
+            } else if (original.sort == 'title') {
+                sort = "sortableTitle";
+            } else {
+                sort = "_score";
+            };
+            if (original.contributors !== undefined) {
+                queries.push({match: {contributors: original.contributors}});
             };
             if (queries.length > 1) {
                 query = {bool: {must: queries}};
@@ -41,7 +49,7 @@
             };
             return {
                 size: BATCH_SIZE,
-                sort: ["_score"],
+                sort: [sort],
                 query: query,
                 highlight: {
                         fields: {
@@ -66,9 +74,6 @@
                     for (var i=0, len=notifies.length; i < len; i++) {
                         notifies[i](data.hits, from || 0);
                     }
-                },
-                failure: function(data) {
-                    alert(data);
                 },
                 data: JSON.stringify(query)
             });
@@ -134,8 +139,7 @@
     };
 
     var BatchDisplayPlugin = function($batch, update) {
-        var
-            PAGING    = 3,
+        var PAGING    = 3,
             NO_LEAP   = 0,
             PRE_LEAP  = 1,
             POST_LEAP = 2,
@@ -150,7 +154,7 @@
             $next_size = $('span.next a span span'),
 
             link_to = function (opt) {
-                var $link = $('<a href="">' + opt.page + '</a>');
+                var $link = $('<a href="">' + opt.page + '</a> ');
 
                 if (opt.paging) {
                     $link.addClass('es-batch');
@@ -192,7 +196,7 @@
                 $batch.hide();
 
                 if (data.total <= BATCH_SIZE) {
-                    return true;
+                    return;
                 }
 
                 $batch.children('a.es-batch, span.current').remove();
@@ -208,14 +212,14 @@
                         continue;
                     }
                     link_to({ page : current_page - i, paging : true }).insertBefore($current);
-                }
+                };
 
                 for (var i = PAGING; i >= 1; i--) {
                     if (current_page + i >= page_count) {
                         continue;
                     }
                     link_to({ page : current_page + i, paging : true }).insertAfter($current);
-                }
+                };
 
                 if (current_page > 1) {
                     var first_leap = current_page - PAGING > 2 ? POST_LEAP : NO_LEAP;
@@ -226,7 +230,7 @@
                     link_to({ page : 1, span : true, leap : first_leap, paging : true }).insertAfter($next);
                 } else {
                     $prev.hide();
-                }
+                };
 
                 if (current_page < page_count) {
                     var last_leap = current_page + PAGING < (page_count - 2) ? PRE_LEAP : NO_LEAP;
@@ -238,8 +242,7 @@
                     link_to({ page : page_count, span : true, leap : last_leap, paging : true }).appendTo($batch);
                 } else {
                     $next.hide();
-                }
-
+                };
 
                 $batch.show();
             }
@@ -256,6 +259,7 @@
                 $author = $form.find('input#Contribs'),
                 $subject = $form.find('input#Suject'),
                 $button = $form.find('input[type=submit]'),
+                $sort = $form.find('select#sort_on'),
                 options = false,
                 previous = null,
                 timeout = null;
@@ -279,13 +283,14 @@
                     if (options) {
                         tmp = $author.val();
                         if (tmp && tmp.length) {
-                            query['author'] = tmp;
+                            query['contributors'] = tmp;
                         };
                         tmp = $subject.val();
                         if (tmp !== undefined && tmp.length) {
                             query['subjects'] = tmp;
                         };
-                    }
+                        query['sort'] = $sort.val();
+                    };
 
                     if (force || query.term != previous && !options) {
                         search.search(query);
