@@ -44,7 +44,31 @@
           </h1>
           <dl class="searchResults">
           </dl>
+
           <div class="listingBar">
+
+            <span class="previous">
+              <a href="">
+                   &laquo;
+                   <span i18n:translate="batch_previous_x_items">
+                       Previous
+                       <span i18n:name="number">n</span>
+                       items
+                   </span>
+                </a>
+            </span>
+
+            <span class="next">
+                <a href="">
+                   <span i18n:translate="batch_next_x_items">
+                       Next
+                       <span i18n:name="number">n</span>
+                       items
+                   </span>
+                   &raquo;
+                </a>
+            </span>
+
           </div>
 
           <div class="emptySearchResults">

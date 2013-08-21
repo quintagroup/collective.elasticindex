@@ -43,9 +43,7 @@
 
         var do_search = function(query, from) {
             // Form up any query here
-            if (from) {
-                query['from'] = from;
-            };
+            query['from'] = from || 0;
             $.ajax({
                 url: get_url(),
                 type: 'POST',
@@ -121,39 +119,109 @@
     };
 
     var BatchDisplayPlugin = function($batch, update) {
+        var
+            PAGING    = 3,
+            NO_LEAP   = 0,
+            PRE_LEAP  = 1,
+            POST_LEAP = 2,
+
+            $prev = $('span.previous'),
+            $next = $('span.next'),
+
+            $prev_a = $('span.previous a'),
+            $next_a = $('span.next a'),
+
+            $prev_size = $('span.previous a span span'),
+            $next_size = $('span.next a span span'),
+
+            link_to = function (opt) {
+                var $link = $('<a href="">' + opt.page + '</a>');
+
+                if (opt.paging) {
+                    $link.addClass('es-batch');
+                }
+
+                if (opt.span) {
+                    $link.wrap($('<span></span>'));
+                }
+
+                if (opt.leap) {
+                    var $leap = $('<span>&hellip;</span>');
+                    if (opt.leap == PRE_LEAP) {
+                        $link.prepend($leap);
+                    } else {
+                        $link.append($leap);
+                    }
+                }
+
+                if (opt.current) {
+                    var $current = $('<span class="current"></span>');
+                    $current.append($link);
+                    return $current;
+                } 
+
+                $link.bind('click', function () {
+                    update((opt.page - 1) * BATCH_SIZE);
+                    return false;
+                });
+
+                return $link;
+            };
+
         return {
             onempty: function() {
                 $batch.hide();
             },
             onresult: function(data, current) {
-                if (data.total < BATCH_SIZE) {
-                    $batch.hide();
-                } else {
-                    var count = Math.ceil(Math.min(data.total / BATCH_SIZE, 10)),
-                        page = 1,
-                        index = 0;
-                    $batch.empty();
-                    while(count--) {
-                        (function (index) {
-                            // The function escape index here.
-                            var $link = $('<a>' + page + '</a> '),
-                                $insert = $link;
+                $batch.hide();
 
-                            if (current == index) {
-                                $insert = $('<span class="current"></span>');
-                                $insert.append($link);
-                            };
-                            $link.bind('click', function() {
-                                update(index);
-                            });
-                            $batch.append($insert);
-                            $batch.append(' ');
-                        })(index);
-                        page += 1;
-                        index += BATCH_SIZE;
-                    };
-                    $batch.show();
-                };
+                if (data.total <= BATCH_SIZE) {
+                    return true;
+                }
+
+                $batch.children('a.es-batch, span.current').remove();
+
+                var page_count = Math.ceil(data.total / BATCH_SIZE);
+                var current_page = Math.ceil(current / BATCH_SIZE) + 1;
+
+                var $current = link_to({ page : current_page, current : true });
+                $current.insertAfter($next);
+
+                for (var i = PAGING; i >= 1; i--) {
+                    if (current_page - i <= 1) {
+                        continue;
+                    }
+                    link_to({ page : current_page - i, paging : true }).insertBefore($current);
+                }
+
+                for (var i = PAGING; i >= 1; i--) {
+                    if (current_page + i >= page_count) {
+                        continue;
+                    }
+                    link_to({ page : current_page + i, paging : true }).insertAfter($current);
+                }
+
+                if (current_page > 1) {
+                    var first_leap = current_page - PAGING > 2 ? POST_LEAP : NO_LEAP;
+                    $prev_size.text(BATCH_SIZE);
+                    $prev.show();
+                    link_to({ page : 1, span : true, leap : first_leap, paging : true }).insertAfter($next);
+                } else {
+                    $prev.hide();
+                }
+
+                if (current_page < page_count) {
+                    var last_leap = current_page + PAGING < (page_count - 2) ? PRE_LEAP : NO_LEAP;
+                    var next_size = Math.min(data.total - (current_page * BATCH_SIZE), BATCH_SIZE);
+                    $next_size.text(next_size);
+                    $next.show();
+                    link_to({ page : page_count, span : true, leap : last_leap, paging : true }).appendTo($batch);
+                } else {
+                    $next.hide();
+                }   
+
+
+                $batch.show();
             }
         };
     };
