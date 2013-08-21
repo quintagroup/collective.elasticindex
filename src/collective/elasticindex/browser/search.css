@@ -3,7 +3,11 @@
 .esSearchForm .searchResults em {
   background-color: #FFFFAA;
 }
+.esSearchForm div.esSearchOptions {
+  text-align: left;
+}
 .esSearchForm .searchResults,
+.esSearchForm div.esSearchOptions,
 .esSearchForm .listingBar {
   display: none;
 }

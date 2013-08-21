@@ -27,7 +27,79 @@
                    type="submit"
                    value="Search"
                    i18n:attributes="value label_search;"/>
-            <p></p>
+
+            <p class="discreet"
+               i18n:translate="search_results_advanced">
+              Did you not find what you were looking for? Try the
+              <span i18n:name="advanced_search">
+                <a class="esSearchOptions" href=""
+                   i18n:translate="search_results_advanced_link">
+                  Advanced Search
+                </a>
+              </span>
+              to refine your search.
+            </p>
+            <div class="esSearchOptions">
+              <div class="field">
+                <label for="Contribs" i18n:translate="label_author">
+                  Author
+                </label>
+
+                <div class="formHelp" i18n:translate="help_search_author">
+                  Return items created by a particular person.
+                </div>
+
+                <input id="Contribs" name="Contribs" />
+              </div>
+              <div class="field"
+                   tal:define="subjects python:here.portal_catalog.uniqueValuesFor('Subject');"
+                   tal:condition="subjects">
+                <label for="Subject" i18n:translate="label_categories">
+                  Categories
+                </label>
+
+                <div class="formHelp" i18n:translate="help_search_categories">
+                  Return items matching some or all of these Categories.
+                  Multiple words may be found by pressing <strong>Ctrl</strong>
+                  (or <strong>Apple</strong> key on Mac) while clicking the
+                  keywords.
+                </div>
+
+                <select name="Subject"
+                        id="Subject"
+                        size="7"
+                        multiple="multiple">
+                  <option value="#"
+                          tal:repeat="subject subjects"
+                          tal:content="subject"
+                          tal:attributes="value subject"
+                          i18n:domain="plone-metadata"
+                          i18n:translate="">dummy</option>
+                </select>
+                <br />
+
+                <input type="radio"
+                       name="Subject_usage:ignore_empty"
+                       id="Subject_or"
+                       value=""
+                       class="noborder"
+                       tal:attributes="checked python:1"/>
+                <label for="Subject_or" i18n:translate="description_subject_or">
+                  Match any
+                </label>
+                <br />
+
+                <input type="radio"
+                       name="Subject_usage:ignore_empty"
+                       id="Subject_and"
+                       value="operator:and"
+                       class="noborder"
+                       tal:attributes="checked python:0"/>
+                <label for="Subject_and" i18n:translate="description_subject_and">
+                  Match all
+                </label>
+              </div>
+            </div>
           </form>
 
           <h1 class="documentFirstHeading">
@@ -49,24 +121,24 @@
 
             <span class="previous">
               <a href="">
-                   &laquo;
-                   <span i18n:translate="batch_previous_x_items">
-                       Previous
-                       <span i18n:name="number">n</span>
-                       items
-                   </span>
-                </a>
+                &laquo;
+                <span i18n:translate="batch_previous_x_items">
+                  Previous
+                  <span i18n:name="number">n</span>
+                  items
+                </span>
+              </a>
             </span>
 
             <span class="next">
-                <a href="">
-                   <span i18n:translate="batch_next_x_items">
-                       Next
-                       <span i18n:name="number">n</span>
-                       items
-                   </span>
-                   &raquo;
-                </a>
+              <a href="">
+                <span i18n:translate="batch_next_x_items">
+                  Next
+                  <span i18n:name="number">n</span>
+                  items
+                </span>
+                &raquo;
+              </a>
             </span>
 
           </div>

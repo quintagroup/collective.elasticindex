@@ -38,6 +38,7 @@ DOCUMENT_MAPPING = {
     'content': ANALYZED_STRING_MAPPING,
     'url': ANALYZED_STRING_MAPPING,
     'author': ANALYZED_STRING_MAPPING,
+    'contributors': ANALYZED_STRING_MAPPING,
 
     'created': DATE_MAPPING,
     'modified': DATE_MAPPING

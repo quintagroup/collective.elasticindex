@@ -38,8 +38,9 @@ def get_data(content):
     data = {'title': title,
             'description': content.Description(),
             'subject': ' '.join(content.Subject()),
+            'contributors': ' '.join(content.Contributors()),
             'url': content.absolute_url(),
-            'author': ' '.join(content.listCreators()),
+            'author': content.Creator(),
             'content': text}
     created = content.created()
     if created is not (None, 'None'):

@@ -16,13 +16,12 @@
             return [search_urls[index], '/', index_name, '/_search'].join('');
         };
 
-        var build_query = function(term) {
-            return {
-                size: BATCH_SIZE,
-                query: {
-                    multi_match : {
-                        query  : term,
-                        fields : [
+        var build_query = function(original) {
+            var queries = [{
+                    query_string : {
+                        query: original.term,
+                        default_operator: "AND",
+                        fields: [
                             "author^2",
                             "title^3",
                             "subject^2",
@@ -30,7 +29,19 @@
                             "content"
                         ]
                     }
-                },
+                }],
+                query;
+            if (original.author !== undefined) {
+                queries.push({field: {author: original.author}});
+            };
+            if (queries.length > 1) {
+                query = {bool: {must: queries}};
+            } else {
+                query = queries[0];
+            };
+            return {
+                size: BATCH_SIZE,
+                query: query,
                 highlight: {
                         fields: {
                             title: {number_of_fragments: 0},
@@ -54,6 +65,9 @@
                     for (var i=0, len=notifies.length; i < len; i++) {
                         notifies[i](data.hits, from || 0);
                     }
+                },
+                failure: function(data) {
+                    alert(data);
                 },
                 data: JSON.stringify(query)
             });
@@ -158,7 +172,7 @@
                     var $current = $('<span class="current"></span>');
                     $current.append($link);
                     return $current;
-                } 
+                }
 
                 $link.bind('click', function () {
                     update((opt.page - 1) * BATCH_SIZE);
@@ -183,8 +197,8 @@
 
                 var page_count = Math.ceil(data.total / BATCH_SIZE);
                 var current_page = Math.ceil(current / BATCH_SIZE) + 1;
-
                 var $current = link_to({ page : current_page, current : true });
+
                 $current.insertAfter($next);
 
                 for (var i = PAGING; i >= 1; i--) {
@@ -218,7 +232,7 @@
                     link_to({ page : page_count, span : true, leap : last_leap, paging : true }).appendTo($batch);
                 } else {
                     $next.hide();
-                }   
+                }
 
 
                 $batch.show();
@@ -229,10 +243,14 @@
     $(document).ready(function() {
         $('.esSearchForm').each(function() {
             var $form = $(this),
+                $options = $form.find('div.esSearchOptions'),
                 search = ElasticSearch($form);
 
-            var $field = $form.find('input[type=text]'),
+            var $query = $form.find('input.searchPage'),
+                $author = $form.find('input#Contribs'),
+                $subject = $form.find('input#Suject'),
                 $button = $form.find('input[type=submit]'),
+                options = false,
                 previous = null,
                 timeout = null;
 
@@ -249,11 +267,23 @@
                     clearTimeout(timeout);
                 };
                 timeout = setTimeout(function () {
-                    var term = $field.attr('value');
+                    var query = {term: $query.val()},
+                        tmp;
 
-                    if (force || term != previous) {
-                        search.search(term);
-                        previous = term;
+                    if (options) {
+                        tmp = $author.val();
+                        if (tmp && tmp.length) {
+                            query['author'] = tmp;
+                        };
+                        tmp = $subject.val();
+                        if (tmp !== undefined && tmp.length) {
+                            query['subjects'] = tmp;
+                        };
+                    }
+
+                    if (force || query.term != previous && !options) {
+                        search.search(query);
+                        previous = query.term;
                     };
                     timeout = null;
                 }, 500);
@@ -263,13 +293,19 @@
             search.subscribe(ResultDisplayPlugin($form.find('dl.searchResults'), $form.find('div.emptySearchResults')));
             search.subscribe(BatchDisplayPlugin($form.find('div.listingBar'), scroll_search));
 
+            $form.find('a.esSearchOptions').bind('click', function (event) {
+                options = !options;
+                $options.slideToggle();
+                event.preventDefault();
+            });
             $button.bind('click', function(event) {
                 schedule_search(true);
                 event.preventDefault();
             });
-            $field.bind('change', schedule_search);
-            $field.bind('keypress', schedule_search);
-            if ($field.attr('value')) {
+            $options.delegate('input,select', 'change', schedule_search);
+            $query.bind('change', schedule_search);
+            $query.bind('keypress', schedule_search);
+            if ($query.val()) {
                 schedule_search();
             };
 
