@@ -219,6 +219,8 @@
                 if (current_page > 1) {
                     var first_leap = current_page - PAGING > 2 ? POST_LEAP : NO_LEAP;
                     $prev_size.text(BATCH_SIZE);
+                    $prev_a.unbind();
+                    $prev_a.bind('click', function () { update(current - BATCH_SIZE); return false });
                     $prev.show();
                     link_to({ page : 1, span : true, leap : first_leap, paging : true }).insertAfter($next);
                 } else {
@@ -229,6 +231,8 @@
                     var last_leap = current_page + PAGING < (page_count - 2) ? PRE_LEAP : NO_LEAP;
                     var next_size = Math.min(data.total - (current_page * BATCH_SIZE), BATCH_SIZE);
                     $next_size.text(next_size);
+                    $next_a.unbind();
+                    $next_a.bind('click', function () { update(current + BATCH_SIZE); return false });
                     $next.show();
                     link_to({ page : page_count, span : true, leap : last_leap, paging : true }).appendTo($batch);
                 } else {
