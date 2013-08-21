@@ -154,38 +154,28 @@
             $next_size = $('span.next a span span'),
 
             link_to = function (opt) {
-                var $link = $('<a href="">' + opt.page + '</a> ');
-
-                if (opt.paging) {
-                    $link.addClass('es-batch');
-                }
-
-                if (opt.span) {
-                    $link.wrap($('<span></span>'));
-                }
-
-                if (opt.leap) {
-                    var $leap = $('<span>&hellip;</span>');
-                    if (opt.leap == PRE_LEAP) {
-                        $link.prepend($leap);
-                    } else {
-                        $link.append($leap);
-                    }
-                }
+                var $item;
 
                 if (opt.current) {
-                    var $current = $('<span class="current"></span>');
-                    $current.append($link);
-                    $current.bind('click', function () { return false });
-                    return $current;
-                }
+                    $item = $('<span class="esGeneratedBatch current"> ' + opt.page + ' </span>');
+                } else {
+                    $item = $('<a class="esGeneratedBatch" href=""> ' + opt.page + ' </a>');
 
-                $link.bind('click', function () {
-                    update((opt.page - 1) * BATCH_SIZE);
-                    return false;
-                });
+                    if (opt.leap) {
+                        var $leap = $('<span>&hellip;</span>');
+                        if (opt.leap == PRE_LEAP) {
+                            $item.prepend($leap);
+                        } else {
+                            $item.append($leap);
+                        }
+                    };
 
-                return $link;
+                    $item.bind('click', function () {
+                        update((opt.page - 1) * BATCH_SIZE);
+                        return false;
+                    });
+                };
+                return $item;
             };
 
         return {
@@ -199,11 +189,11 @@
                     return;
                 }
 
-                $batch.children('a.es-batch, span.current').remove();
+                $batch.children('.esGeneratedBatch').remove();
 
                 var page_count = Math.ceil(data.total / BATCH_SIZE);
                 var current_page = Math.ceil(current / BATCH_SIZE) + 1;
-                var $current = link_to({ page : current_page, current : true });
+                var $current = link_to({page : current_page, current: true});
 
                 $current.insertAfter($next);
 
@@ -211,14 +201,14 @@
                     if (current_page - i <= 1) {
                         continue;
                     }
-                    link_to({ page : current_page - i, paging : true }).insertBefore($current);
+                    link_to({page : current_page - i}).insertBefore($current);
                 };
 
                 for (var i = PAGING; i >= 1; i--) {
                     if (current_page + i >= page_count) {
                         continue;
                     }
-                    link_to({ page : current_page + i, paging : true }).insertAfter($current);
+                    link_to({page : current_page + i}).insertAfter($current);
                 };
 
                 if (current_page > 1) {
@@ -227,7 +217,7 @@
                     $prev_a.unbind();
                     $prev_a.bind('click', function () { update(current - BATCH_SIZE); return false });
                     $prev.show();
-                    link_to({ page : 1, span : true, leap : first_leap, paging : true }).insertAfter($next);
+                    link_to({page: 1, leap: first_leap}).insertAfter($next);
                 } else {
                     $prev.hide();
                 };
@@ -239,7 +229,7 @@
                     $next_a.unbind();
                     $next_a.bind('click', function () { update(current + BATCH_SIZE); return false });
                     $next.show();
-                    link_to({ page : page_count, span : true, leap : last_leap, paging : true }).appendTo($batch);
+                    link_to({page: page_count, leap: last_leap}).appendTo($batch);
                 } else {
                     $next.hide();
                 };
