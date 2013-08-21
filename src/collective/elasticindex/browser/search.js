@@ -32,6 +32,7 @@
                 }],
                 query,
                 sort = {};
+            // Sorting options.
             if (original.sort == 'created' || original.sort == 'modified') {
                 sort[original.sort] = 'desc';
             } else if (original.sort == 'title') {
@@ -39,8 +40,12 @@
             } else {
                 sort = "_score";
             };
-            if (original.contributors !== undefined) {
+            // Other criterias
+            if (original.contributors) {
                 queries.push({match: {contributors: original.contributors}});
+            };
+            if (original.created) {
+                queries.push({range: {created: {from: original.created}}});
             };
             if (queries.length > 1) {
                 query = {bool: {must: queries}};
@@ -248,6 +253,7 @@
             var $query = $form.find('input.searchPage'),
                 $author = $form.find('input#Contribs'),
                 $subject = $form.find('input#Suject'),
+                $since = $form.find('select#created'),
                 $button = $form.find('input[type=submit]'),
                 $sort = $form.find('select#sort_on'),
                 options = false,
@@ -267,18 +273,12 @@
                     clearTimeout(timeout);
                 };
                 timeout = setTimeout(function () {
-                    var query = {term: $query.val()},
-                        tmp;
+                    var query = {term: $query.val()};
 
                     if (options) {
-                        tmp = $author.val();
-                        if (tmp && tmp.length) {
-                            query['contributors'] = tmp;
-                        };
-                        tmp = $subject.val();
-                        if (tmp !== undefined && tmp.length) {
-                            query['subjects'] = tmp;
-                        };
+                        query['contributors'] = $author.val();
+                        query['subjects'] = $subject.val();
+                        query['created'] = $since.val();
                         query['sort'] = $sort.val();
                     };
 

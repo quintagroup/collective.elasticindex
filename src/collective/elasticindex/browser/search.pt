@@ -102,6 +102,32 @@
               </div>
 
               <div class="field">
+                <label for="created" i18n:translate="label_new_items_since">
+                  New items since
+                </label>
+
+                <div class="formHelp" i18n:translate="help_search_new_items_since">
+                  Return items added since you were last logged on, the last week, etc.
+                </div>
+
+                <select name="created"
+                        id="created">
+                  <option value="now-1d" i18n:translate="time_yesterday">
+                    Yesterday
+                  </option>
+                  <option value="now-1w" i18n:translate="time_last_week">
+                    Last week
+                  </option>
+                  <option value="now-1M" i18n:translate="time_last_month">
+                    Last month
+                  </option>
+                  <option value="" selected="selected" i18n:translate="time_ever">
+                    Ever
+                  </option>
+                </select>
+              </div>
+
+              <div class="field">
                 <label for="sort_on" i18n:translate="">Sort results</label>
 
                 <div class="formHelp" i18n:translate="">
