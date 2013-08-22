@@ -321,10 +321,6 @@
                 previous = null,
                 timeout = null;
 
-            if (options) {
-                $options.show();
-            };
-
             var scroll_search = function(index) {
                 if (timeout !== null) {
                     clearTimeout(timeout);
@@ -376,6 +372,10 @@
             $query.bind('change', schedule_search);
             $query.bind('keypress', schedule_search);
             if ($query.val()) {
+                schedule_search();
+            };
+            if (options) {
+                $options.show();
                 schedule_search();
             };
 
