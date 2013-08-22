@@ -117,19 +117,22 @@
     };
 
     var ResultDisplayPlugin = function($result, $empty) {
-        var trailing_re = /^[;,\. ]*(.*?)[;,\. ]*$/;
+        var trailing_punctuation_re = /^[;,.\s]*([\S\s]*?)[;,.\s]*$/;
 
-        var trail = function(string) {
-            var match = string.match(trailing_re);
+        var trim_punctuation = function(string) {
+            var match = string.match(trailing_punctuation_re);
             if (match) {
                 return match[1];
             }
             return string;
         };
+        var truncate_text = function(string) {
+            return string.length > 256 ? string.substr(0, 256) + ' &hellip;' : string;
+        };
 
         var get_entry = function(entry) {
             var title = entry.fields.title,
-                description = entry.fields.description,
+                description = null,
                 i;
 
             if (entry.highlight !== undefined) {
@@ -139,8 +142,15 @@
                 if (entry.highlight.description !== undefined) {
                     description = '&hellip; ';
                     for (i=0; i < entry.highlight.description.length; i++) {
-                        description += trail(entry.highlight.description[i]) + ' &hellip; ';
+                        description += trim_punctuation(entry.highlight.description[i]) + ' &hellip; ';
                     };
+                };
+            };
+            if (description === null) {
+                if (entry.fields.description) {
+                    description = truncate_text(entry.fields.description);
+                } else {
+                    description = '';
                 };
             };
             return {
