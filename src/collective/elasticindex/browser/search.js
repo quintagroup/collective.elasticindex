@@ -47,11 +47,14 @@
             if (original.created) {
                 queries.push({range: {created: {from: original.created}}});
             };
+            if (original.url) {
+                queries.push({prefix: {url: original.url}});
+            };
             if (original.subject && original.subject.length) {
                 var subjects = [], i;
 
                 for (i=0; i < original.subject.length; i++) {
-                    subjects.push({field: {subject: original.subject[i]}});
+                    subjects.push({term: {subject: original.subject[i]}});
                 };
                 if (subjects.length > 1) {
                     if (original.subject_and) {
@@ -311,6 +314,7 @@
                 $subject = $form.find('select#Subject'),
                 $subject_operator = $form.find('input#Subject_and'),
                 $since = $form.find('select#created'),
+                $current = $form.find('input#CurrentFolderOnly'),
                 $button = $form.find('input[type=submit]'),
                 $sort = $form.find('select#sort_on'),
                 options = false,
@@ -338,6 +342,9 @@
                         query['subject_and'] = $subject_operator.is(":checked");
                         query['created'] = $since.val();
                         query['sort'] = $sort.val();
+                        if ($current.is(":checked")) {
+                            query['url'] = $current.val();
+                        };
                     };
 
                     if (force || query.term != previous && !options) {

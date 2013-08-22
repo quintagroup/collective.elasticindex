@@ -42,6 +42,17 @@
             </p>
             <div class="esSearchOptions">
               <div class="field">
+                <input id="CurrentFolderOnly"
+                       class="noborder" type="checkbox"
+                       name="url"
+                       tal:attributes="value context/absolute_url"/>
+                <label for="CurrentFolderOnly"
+                       style="cursor: pointer"
+                       i18n:translate="only_in_current_selection">
+                  Only in current section
+                </label>
+              </div>
+              <div class="field">
                 <label for="Contribs" i18n:translate="label_author">
                   Author
                 </label>
