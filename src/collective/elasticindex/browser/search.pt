@@ -80,7 +80,7 @@
                 <br />
 
                 <input type="radio"
-                       name="Subject_usage:ignore_empty"
+                       name="Subject_usage"
                        id="Subject_or"
                        value=""
                        class="noborder"
@@ -91,9 +91,9 @@
                 <br />
 
                 <input type="radio"
-                       name="Subject_usage:ignore_empty"
+                       name="Subject_usage"
                        id="Subject_and"
-                       value="operator:and"
+                       value="and"
                        class="noborder"
                        tal:attributes="checked python:0"/>
                 <label for="Subject_and" i18n:translate="description_subject_and">

@@ -47,6 +47,22 @@
             if (original.created) {
                 queries.push({range: {created: {from: original.created}}});
             };
+            if (original.subject && original.subject.length) {
+                var subjects = [], i;
+
+                for (i=0; i < original.subject.length; i++) {
+                    subjects.push({field: {subject: original.subject[i]}});
+                };
+                if (subjects.length > 1) {
+                    if (original.subject_and) {
+                        queries.push({bool: {must: subjects}});
+                    } else {
+                        queries.push({bool: {should: subjects}});
+                    };
+                } else {
+                    queries.push(subjects[0]);
+                };
+            };
             if (queries.length > 1) {
                 query = {bool: {must: queries}};
             } else {
@@ -293,6 +309,7 @@
             var $query = $form.find('input.searchPage'),
                 $author = $form.find('input#Contribs'),
                 $subject = $form.find('input#Suject'),
+                $subject_operator = $form.find('Subject_and'),
                 $since = $form.find('select#created'),
                 $button = $form.find('input[type=submit]'),
                 $sort = $form.find('select#sort_on'),
@@ -317,7 +334,8 @@
 
                     if (options) {
                         query['contributors'] = $author.val();
-                        query['subjects'] = $subject.val();
+                        query['subject'] = $subject.val();
+                        query['subject_and'] = $subject_operator.is(":checked");
                         query['created'] = $since.val();
                         query['sort'] = $sort.val();
                     };
