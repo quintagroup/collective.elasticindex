@@ -127,7 +127,7 @@
                                portal_types portal/portal_types;
                                all_used_types  python:context.portal_catalog.uniqueValuesFor('portal_type');
                                used_types  python:context.plone_utils.getUserFriendlyTypes(all_used_types);
-                               all_checked python:(len(used_types) == len(request.get('portal_type', [])));
+                               all_checked python:'portal_type' not in request or (len(used_types) == len(request['portal_type']));
                                toggle_select_state python:all_checked and 'true' or 'false';">
                 <label class="collapser" i18n:translate="label_item_type">
                   Item type
@@ -166,7 +166,7 @@
                                checked="checked"
                                tal:attributes="value type;
                                                id string:portal_type_${repeat/sublist/number}_${repeat/type/number};
-                                               checked python:(type in request.get('portal_type', [])) and 'checked' or ''"/>
+                                               checked python:(all_checked or type in request.get('portal_type', [])) and 'checked' or ''"/>
                         <label for=""
                                i18n:translate=""
                                tal:attributes="for string:portal_type_${repeat/sublist/number}_${repeat/type/number}"
