@@ -117,6 +117,39 @@
     };
 
     var ResultDisplayPlugin = function($result, $empty) {
+        var trailing_re = /^[;,\. ]*(.*?)[;,\. ]*$/;
+
+        var trail = function(string) {
+            var match = string.match(trailing_re);
+            if (match) {
+                return match[1];
+            }
+            return string;
+        };
+
+        var get_entry = function(entry) {
+            var title = entry.fields.title,
+                description = entry.fields.description,
+                i;
+
+            if (entry.highlight !== undefined) {
+                if (entry.highlight.title !== undefined) {
+                    title = entry.highlight.title[0];
+                };
+                if (entry.highlight.description !== undefined) {
+                    description = '&hellip; ';
+                    for (i=0; i < entry.highlight.description.length; i++) {
+                        description += trail(entry.highlight.description[i]) + ' &hellip; ';
+                    };
+                };
+            };
+            return {
+                title: title,
+                description: description,
+                url: entry.fields.url
+            };
+        };
+
         return {
             onempty: function() {
                 $result.hide();
@@ -124,19 +157,16 @@
             },
             onresult: function(data) {
                 var entry, i, len;
-                var title, description, url;
 
                 $empty.hide();
                 $result.empty();
                 $result.show();
                 for (i=0, len=data.hits.length; i < len; i++) {
-                    entry = data.hits[i];
-                    title = (entry.highlight && entry.highlight.title) || entry.fields.title;
-                    description = (entry.highlight && entry.highlight.description) || entry.fields.description;
-                    url = entry.fields.url;
+                    entry = get_entry(data.hits[i]);
                     $result.append(
                         '<dt class="contenttype-document"><a href="'
-                            + url + '">' + title + '</a></dt><dd>' + description + '</dd>'
+                            + entry.url + '">' + entry.title + '</a></dt><dd>'
+                            + entry.description + '</dd>'
                     );
                 };
             }
