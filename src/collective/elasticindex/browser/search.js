@@ -322,7 +322,7 @@
                 timeout = null;
 
             if (options) {
-                $options.slideDown();
+                $options.show();
             };
 
             var scroll_search = function(index) {
