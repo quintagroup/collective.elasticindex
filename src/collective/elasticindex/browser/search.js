@@ -308,8 +308,8 @@
 
             var $query = $form.find('input.searchPage'),
                 $author = $form.find('input#Contribs'),
-                $subject = $form.find('input#Suject'),
-                $subject_operator = $form.find('Subject_and'),
+                $subject = $form.find('select#Suject'),
+                $subject_operator = $form.find('input#Subject_and'),
                 $since = $form.find('select#created'),
                 $button = $form.find('input[type=submit]'),
                 $sort = $form.find('select#sort_on'),
