@@ -1,6 +1,9 @@
 <configure
    xmlns="http://namespaces.zope.org/zope"
+   xmlns:plone="http://namespaces.plone.org/plone"
    xmlns:browser="http://namespaces.zope.org/browser">
+
+  <include package="plone.app.portlets" />
 
   <browser:page
      for="Products.CMFPlone.interfaces.IPloneSiteRoot"
@@ -15,6 +18,15 @@
      template="search.pt"
      class=".search.SearchPage"
      permission="zope.Public"
+     />
+
+  <plone:portlet
+     name="elasticindex.search"
+     interface=".portlet.ISearchPortlet"
+     assignment=".portlet.SearchPortlet"
+     renderer=".portlet.SearchPortletRenderer"
+     addview=".portlet.SearchPortletAddForm"
+     editview=".portlet.SearchPortletEditForm"
      />
 
  <browser:resource

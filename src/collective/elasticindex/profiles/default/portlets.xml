@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<portlets>
+
+  <portlet
+     addview="elasticindex.search"
+     title="ElasticSearch search"
+     description="Portlet searching content in elastic search."
+     />
+
+  <assignment name="search" category="context" key="/"
+              manager="plone.rightcolumn" type="elasticindex.search">
+  </assignment>
+
+</portlets>

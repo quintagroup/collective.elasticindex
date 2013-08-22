@@ -45,7 +45,8 @@
                 <input id="CurrentFolderOnly"
                        class="noborder" type="checkbox"
                        name="url"
-                       tal:attributes="value context/absolute_url"/>
+                       tal:attributes="value container/absolute_url;
+                                       checked request/form/url | nothing"/>
                 <label for="CurrentFolderOnly"
                        style="cursor: pointer"
                        i18n:translate="only_in_current_selection">

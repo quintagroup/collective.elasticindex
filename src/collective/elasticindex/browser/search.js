@@ -54,7 +54,7 @@
                 var subjects = [], i;
 
                 for (i=0; i < original.subject.length; i++) {
-                    subjects.push({term: {subject: original.subject[i]}});
+                    subjects.push({field: {subject: original.subject[i]}});
                 };
                 if (subjects.length > 1) {
                     if (original.subject_and) {
@@ -317,9 +317,13 @@
                 $current = $form.find('input#CurrentFolderOnly'),
                 $button = $form.find('input[type=submit]'),
                 $sort = $form.find('select#sort_on'),
-                options = false,
+                options = $current.is(':checked'),
                 previous = null,
                 timeout = null;
+
+            if (options) {
+                $options.slideDown();
+            };
 
             var scroll_search = function(index) {
                 if (timeout !== null) {
