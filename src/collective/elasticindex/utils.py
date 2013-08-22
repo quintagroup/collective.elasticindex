@@ -8,6 +8,12 @@ ANALYZED_STRING_MAPPING = {
     'store': 'yes'
 }
 
+STORED_STRING_MAPPING = {
+    'index': 'not_analyzed',
+    'type': 'string',
+    'store': 'yes',
+}
+
 STRING_MAPPING = {
     'index': 'not_analyzed',
     'type': 'string',
@@ -34,9 +40,11 @@ DOCUMENT_MAPPING = {
     'subject': ANALYZED_STRING_MAPPING,
     'description': ANALYZED_STRING_MAPPING,
     'content': ANALYZED_STRING_MAPPING,
-    'url': ANALYZED_STRING_MAPPING,
     'author': ANALYZED_STRING_MAPPING,
     'contributors': ANALYZED_STRING_MAPPING,
+
+    # Not analyzed
+    'url': STORED_STRING_MAPPING,
 
     # Not stored
     'created': DATE_MAPPING,
