@@ -47,8 +47,8 @@ def get_data(content):
     data = {'title': title,
             'sortableTitle': sortable_string(title),
             'description': content.Description(),
-            'subject': ' '.join(content.Subject()),
-            'contributors': ' '.join(content.Contributors()),
+            'subject': content.Subject(),
+            'contributors': content.Contributors(),
             'url': content.absolute_url(),
             'author': content.Creator(),
             'content': text}
