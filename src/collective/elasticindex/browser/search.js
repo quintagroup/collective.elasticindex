@@ -1,7 +1,7 @@
 
 (function($) {
     // Hang on in there. We have jQuery, 1.4.
-    var BATCH_SIZE = 10;
+    var BATCH_SIZE = 15;
 
     var ElasticSearch = function($form) {
         var search_urls = $form.data('server-urls'),
@@ -22,8 +22,8 @@
                         query: original.term,
                         default_operator: "AND",
                         fields: [
-                            "author^2",
                             "title^3",
+                            "contributors^2",
                             "subject^2",
                             "description",
                             "content"
@@ -371,14 +371,12 @@
             $options.delegate('input,select', 'change', schedule_search);
             $query.bind('change', schedule_search);
             $query.bind('keypress', schedule_search);
-            if ($query.val()) {
+            if ($query.val() || options) {
+                if (options) {
+                    $options.show();
+                };
                 schedule_search();
             };
-            if (options) {
-                $options.show();
-                schedule_search();
-            };
-
         });
     });
 

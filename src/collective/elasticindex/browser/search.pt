@@ -53,101 +53,170 @@
                   Only in current section
                 </label>
               </div>
-              <div class="field">
-                <label for="Contribs" i18n:translate="label_author">
+
+              <div class="field collapsible">
+                <label for="Contribs" class="collapser"
+                       i18n:translate="label_author">
                   Author
                 </label>
 
-                <div class="formHelp" i18n:translate="help_search_author">
-                  Return items created by a particular person.
-                </div>
+                <div class="collapse">
+                  <div class="formHelp" i18n:translate="help_search_author">
+                    Return items created by a particular person.
+                  </div>
 
-                <input id="Contribs" name="Contribs" />
+                  <input id="Contribs" name="Contribs" />
+                </div>
               </div>
-              <div class="field"
+
+              <div class="field collapsible"
                    tal:define="subjects python:here.portal_catalog.uniqueValuesFor('Subject');"
                    tal:condition="subjects">
-                <label for="Subject" i18n:translate="label_categories">
+                <label for="Subject" class="collapser"
+                       i18n:translate="label_categories">
                   Categories
                 </label>
 
-                <div class="formHelp" i18n:translate="help_search_categories">
-                  Return items matching some or all of these Categories.
-                  Multiple words may be found by pressing <strong>Ctrl</strong>
-                  (or <strong>Apple</strong> key on Mac) while clicking the
-                  keywords.
-                </div>
+                <div class="collapse">
+                  <div class="formHelp" i18n:translate="help_search_categories">
+                    Return items matching some or all of these Categories.
+                    Multiple words may be found by pressing <strong>Ctrl</strong>
+                    (or <strong>Apple</strong> key on Mac) while clicking the
+                    keywords.
+                  </div>
 
-                <select name="Subject"
-                        id="Subject"
-                        size="7"
-                        multiple="multiple">
-                  <option value="#"
-                          tal:repeat="subject subjects"
-                          tal:content="subject"
-                          tal:attributes="value subject"
+                  <select name="Subject"
+                          id="Subject"
+                          size="7"
+                          multiple="multiple">
+                    <option value="#"
+                            tal:repeat="subject subjects"
+                            tal:content="subject"
+                            tal:attributes="value subject"
                           i18n:domain="plone-metadata"
-                          i18n:translate="">dummy</option>
-                </select>
-                <br />
+                            i18n:translate="">dummy</option>
+                  </select>
+                  <br />
 
-                <input type="radio"
-                       name="Subject_usage"
-                       id="Subject_or"
-                       value=""
+                  <input type="radio"
+                         name="Subject_usage"
+                         id="Subject_or"
+                         value=""
                        class="noborder"
-                       tal:attributes="checked python:1"/>
-                <label for="Subject_or" i18n:translate="description_subject_or">
-                  Match any
-                </label>
-                <br />
+                         tal:attributes="checked python:1"/>
+                  <label for="Subject_or" i18n:translate="description_subject_or">
+                    Match any
+                  </label>
+                  <br />
 
-                <input type="radio"
-                       name="Subject_usage"
-                       id="Subject_and"
-                       value="and"
-                       class="noborder"
+                  <input type="radio"
+                         name="Subject_usage"
+                         id="Subject_and"
+                         value="and"
+                         class="noborder"
                        tal:attributes="checked python:0"/>
-                <label for="Subject_and" i18n:translate="description_subject_and">
-                  Match all
-                </label>
+                  <label for="Subject_and" i18n:translate="description_subject_and">
+                    Match all
+                  </label>
+                </div>
               </div>
 
-              <div class="field">
-                <label for="created" i18n:translate="label_new_items_since">
+
+              <div class="field collapsible"
+                   tal:define="portal context/@@plone_portal_state/portal;
+                               portal_types portal/portal_types;
+                               all_used_types  python:context.portal_catalog.uniqueValuesFor('portal_type');
+                               used_types  python:context.plone_utils.getUserFriendlyTypes(all_used_types);
+                               all_checked python:(len(used_types) == len(request.get('portal_type', [])));
+                               toggle_select_state python:all_checked and 'true' or 'false';">
+                <label class="collapser" i18n:translate="label_item_type">
+                  Item type
+                </label>
+
+                <div class="collapse">
+                  <div class="formHelp" i18n:translate="help_search_item_type">
+                    Return items of a specific type.
+                  </div>
+
+                  <span class="optionsToggle">
+                    <input type="checkbox"
+                           onclick=""
+                           name="pt_toggle"
+                           value="#"
+                           id="pt_toggle"
+                           class="noborder"
+                           checked="checked"
+                           tal:attributes="checked python:all_checked and 'checked' or '';
+                                           onclick string:javascript:toggleSelect(this, 'portal_type:list', ${toggle_select_state});"/>
+                    <label for="pt_toggle"
+                           i18n:translate="label_toggle">Select All/None
+                    </label>
+                  </span>
+                  <br />
+                  <div style="float:left; margin-right: 2em;"
+                       tal:define="typeLists python:context.createMultiColumnList(used_types, numCols=2, sort_on='self');"
+                       tal:repeat="sublist typeLists">
+                    <tal:items repeat="type sublist">
+                      <input type="checkbox"
+                             name="portal_type:list"
+                             value="#"
+                             class="noborder"
+                             checked="checked"
+                             tal:attributes="value type;
+                                             id string:portal_type_${repeat/sublist/number}_${repeat/type/number};
+                                             checked python:(type in request.get('portal_type', [])) and 'checked' or ''"/>
+                      <label for=""
+                             i18n:translate=""
+                             tal:attributes="for string:portal_type_${repeat/sublist/number}_${repeat/type/number}"
+                             tal:content="python: portal_types.getTypeInfo(type).Title()"
+                             />
+                      <br />
+                    </tal:items>
+                  </div>
+                  <div class="visualClear" id="clear-after-item-type"><!-- --></div>
+                </div>
+              </div>
+
+              <div class="field collapsible">
+                <label for="created" class="collapser"
+                       i18n:translate="label_new_items_since">
                   New items since
                 </label>
 
-                <div class="formHelp" i18n:translate="help_search_new_items_since">
-                  Return items added since you were last logged on, the last week, etc.
-                </div>
+                <div class="collapse">
+                  <div class="formHelp" i18n:translate="help_search_new_items_since">
+                    Return items added since you were last logged on, the last week, etc.
+                  </div>
 
-                <select name="created"
-                        id="created">
-                  <option value="now-1d" i18n:translate="time_yesterday">
-                    Yesterday
-                  </option>
-                  <option value="now-1w" i18n:translate="time_last_week">
-                    Last week
-                  </option>
-                  <option value="now-1M" i18n:translate="time_last_month">
-                    Last month
-                  </option>
-                  <option value="" selected="selected" i18n:translate="time_ever">
-                    Ever
-                  </option>
-                </select>
+                  <select name="created"
+                          id="created">
+                    <option value="now-1d" i18n:translate="time_yesterday">
+                      Yesterday
+                    </option>
+                    <option value="now-1w" i18n:translate="time_last_week">
+                      Last week
+                    </option>
+                    <option value="now-1M" i18n:translate="time_last_month">
+                      Last month
+                    </option>
+                    <option value="" selected="selected" i18n:translate="time_ever">
+                      Ever
+                    </option>
+                  </select>
+                </div>
               </div>
 
-              <div class="field">
-                <label for="sort_on" i18n:translate="">Sort results</label>
+              <div class="field collapsible">
+                <label for="sort_on" class="collapser"
+                       i18n:translate="">Sort results</label>
 
-                <div class="formHelp" i18n:translate="">
-                  Sort the Search Results based on the selected criterion
-                </div>
+                <div class="collapse">
+                  <div class="formHelp" i18n:translate="">
+                    Sort the Search Results based on the selected criterion
+                  </div>
 
-                <select name="sort_on"
-                        id="sort_on">
+                  <select name="sort_on"
+                          id="sort_on">
                   <option value="" i18n:translate="">
                     Relevance
                   </option>
@@ -160,9 +229,9 @@
                   <option value="title" i18n:translate="">
                     Title
                   </option>
-                </select>
+                  </select>
+                </div>
               </div>
-
             </div>
           </form>
 
