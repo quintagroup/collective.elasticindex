@@ -23,7 +23,7 @@
             <input type="text" placeholder="Search ..." class="searchPage"
                    title="Search Site"
                    i18n:attributes="title title_search_title"
-                   tal:attributes="value request/SearchableText | nothing"/>
+                   tal:attributes="value request/form/SearchableText | nothing"/>
             <input class="searchPage searchButton allowMultiSubmit"
                    type="submit"
                    value="Search"
@@ -40,13 +40,14 @@
               </span>
               to refine your search.
             </p>
-            <div class="esSearchOptions">
+            <div class="esSearchOptions"
+                 tal:attributes="class string:esSearchOptions ${view/expanded}">
               <div class="field">
                 <input id="CurrentFolderOnly"
                        class="noborder" type="checkbox"
                        name="url"
                        tal:attributes="value container/absolute_url;
-                                       checked request/form/url | nothing"/>
+                                       checked request/form/section | nothing"/>
                 <label for="CurrentFolderOnly"
                        style="cursor: pointer"
                        i18n:translate="only_in_current_selection">
@@ -233,6 +234,15 @@
                     Title
                   </option>
                   </select>
+                </div>
+
+                <div class="formControls">
+                  <input class="context"
+                         type="submit"
+                         name="submit"
+                         value="Search"
+                         i18n:attributes="value label_search;"
+                         />
                 </div>
               </div>
             </div>

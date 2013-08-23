@@ -317,7 +317,7 @@
                 $current = $form.find('input#CurrentFolderOnly'),
                 $button = $form.find('input[type=submit]'),
                 $sort = $form.find('select#sort_on'),
-                options = $current.is(':checked'),
+                options = $options.hasClass('expanded'),
                 previous = null,
                 timeout = null;
 
@@ -374,6 +374,7 @@
             if ($query.val() || options) {
                 if (options) {
                     $options.show();
+                    $options.removeClass('expanded');
                 };
                 schedule_search();
             };

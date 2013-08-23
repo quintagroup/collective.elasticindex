@@ -12,6 +12,9 @@ class SearchPage(BrowserView):
         settings = IElasticSettings(getUtility(IPloneSiteRoot))
         self.server_urls = json.dumps(list(settings.server_urls))
         self.index_name = settings.index_name
+        self.expanded = ''
+        if 'section' in self.request.form or 'advanced' in self.request.form:
+            self.expanded = 'expanded'
         self.request.set('disable_border', 1)
         self.request.set('disable_plone.leftcolumn', 1)
         self.request.set('disable_plone.rightcolumn', 1)

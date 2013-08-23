@@ -1,5 +1,6 @@
 <dl class="portlet" id="portlet-searchforcontent"
-    i18n:domain="plone">
+    i18n:domain="plone"
+    tal:define="portal_state context/@@plone_portal_state;">
 
   <dt class="portletHeader">Search for Content</dt>
 
@@ -18,14 +19,20 @@
                value="&nbsp;&nbsp;" /> <br />
         <input id="CurrentFolderOnly"
                class="noborder" type="checkbox"
-               name="url"
-               tal:attributes="value container/absolute_url"/>
+               name="section"
+               value="1" />
         <label for="CurrentFolderOnly"
                style="cursor: pointer">
           only in current section
         </label>
       </p>
     </form>
+
+    <p>
+      <a href=""
+         tal:attributes="href string:${portal_state/portal_url}/search.html?advanced"
+         i18n:translate="advanced_search">Advanced Search</a>
+    </p>
 
   </dd>
 
