@@ -72,7 +72,7 @@
             } else {
                 query = queries[0];
             };
-            
+
             if (original.meta_type) {
                 query = {
                     filtered : {
@@ -352,7 +352,8 @@
                     clearTimeout(timeout);
                 };
                 timeout = setTimeout(function () {
-                    var query = {term: $query.val()};
+                    var query = {term: $query.val()},
+                        meta_types = [];
 
                     if (options) {
                         query['contributors'] = $author.val();
@@ -365,13 +366,14 @@
                         };
 
                         $meta_types.each(function () {
-                            if ($(this).is(':checked')) {
-                                if (query['meta_type'] === undefined) {
-                                    query['meta_type'] = [];
-                                }
-                                query['meta_type'].push('AT'+$(this).attr("value"));
-                            }
+                            var $field = $(this);
+                            if ($field.is(':checked')) {
+                                meta_types.push($field.val());
+                            };
                         });
+                        if (meta_types.length) {
+                            query['meta_type'] = meta_types;
+                        };
                     };
 
                     if (force || query.term != previous && !options) {
