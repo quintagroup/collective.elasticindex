@@ -55,71 +55,67 @@
                 </label>
               </div>
 
-              <div class="field collapsible">
-                <label for="Contribs" class="collapser"
+              <div class="field">
+                <label for="Contribs"
                        i18n:translate="label_author">
                   Author
                 </label>
 
-                <div class="collapse">
-                  <div class="formHelp" i18n:translate="help_search_author">
-                    Return items created by a particular person.
-                  </div>
-
-                  <input id="Contribs" name="Contribs" />
+                <div class="formHelp" i18n:translate="help_search_author">
+                  Return items created by a particular person.
                 </div>
+
+                <input id="Contribs" name="Contribs" />
               </div>
 
-              <div class="field collapsible"
+              <div class="field"
                    tal:define="subjects python:here.portal_catalog.uniqueValuesFor('Subject');"
                    tal:condition="subjects">
-                <label for="Subject" class="collapser"
+                <label for="Subject"
                        i18n:translate="label_categories">
                   Categories
                 </label>
 
-                <div class="collapse">
-                  <div class="formHelp" i18n:translate="help_search_categories">
-                    Return items matching some or all of these Categories.
-                    Multiple words may be found by pressing <strong>Ctrl</strong>
-                    (or <strong>Apple</strong> key on Mac) while clicking the
-                    keywords.
-                  </div>
-
-                  <select name="Subject"
-                          id="Subject"
-                          size="7"
-                          multiple="multiple">
-                    <option value="#"
-                            tal:repeat="subject subjects"
-                            tal:content="subject"
-                            tal:attributes="value subject"
-                          i18n:domain="plone-metadata"
-                            i18n:translate="">dummy</option>
-                  </select>
-                  <br />
-
-                  <input type="radio"
-                         name="Subject_usage"
-                         id="Subject_or"
-                         value=""
-                       class="noborder"
-                         tal:attributes="checked python:1"/>
-                  <label for="Subject_or" i18n:translate="description_subject_or">
-                    Match any
-                  </label>
-                  <br />
-
-                  <input type="radio"
-                         name="Subject_usage"
-                         id="Subject_and"
-                         value="and"
-                         class="noborder"
-                       tal:attributes="checked python:0"/>
-                  <label for="Subject_and" i18n:translate="description_subject_and">
-                    Match all
-                  </label>
+                <div class="formHelp" i18n:translate="help_search_categories">
+                  Return items matching some or all of these Categories.
+                  Multiple words may be found by pressing <strong>Ctrl</strong>
+                  (or <strong>Apple</strong> key on Mac) while clicking the
+                  keywords.
                 </div>
+
+                <select name="Subject"
+                        id="Subject"
+                        size="7"
+                        multiple="multiple">
+                  <option value="#"
+                          tal:repeat="subject subjects"
+                          tal:content="subject"
+                          tal:attributes="value subject"
+                          i18n:domain="plone-metadata"
+                          i18n:translate="">dummy</option>
+                </select>
+                <br />
+
+                <input type="radio"
+                       name="Subject_usage"
+                       id="Subject_or"
+                       value=""
+                       class="noborder"
+                       tal:attributes="checked python:1"/>
+                <label for="Subject_or" i18n:translate="description_subject_or">
+                  Match any
+                </label>
+                <br />
+
+                <input type="radio"
+                       name="Subject_usage"
+                       id="Subject_and"
+                       value="and"
+                       class="noborder"
+                       tal:attributes="checked python:0"/>
+                <label for="Subject_and" i18n:translate="description_subject_and">
+                  Match all
+                </label>
               </div>
 
 
@@ -210,17 +206,16 @@
                 </div>
               </div>
 
-              <div class="field collapsible">
-                <label for="sort_on" class="collapser"
+              <div class="field">
+                <label for="sort_on"
                        i18n:translate="">Sort results</label>
 
-                <div class="collapse">
-                  <div class="formHelp" i18n:translate="">
-                    Sort the Search Results based on the selected criterion
-                  </div>
+                <div class="formHelp" i18n:translate="">
+                  Sort the Search Results based on the selected criterion
+                </div>
 
-                  <select name="sort_on"
-                          id="sort_on">
+                <select name="sort_on"
+                        id="sort_on">
                   <option value="" i18n:translate="">
                     Relevance
                   </option>
@@ -233,69 +228,68 @@
                   <option value="title" i18n:translate="">
                     Title
                   </option>
-                  </select>
-                </div>
-
-                <div class="formControls">
-                  <input class="context allowMultiSubmit"
-                         type="submit"
-                         name="submit"
-                         value="Search"
-                         i18n:attributes="value label_search;"
-                         />
-                </div>
+                </select>
               </div>
+
+            <div class="formControls">
+              <input class="context allowMultiSubmit"
+                     type="submit"
+                     name="submit"
+                     value="Search"
+                     i18n:attributes="value label_search;"
+                     />
+            </div>
             </div>
           </form>
 
-          <h1 class="documentFirstHeading">
-            <span i18n:translate="heading_search_results">
-              Search results
+        <h1 class="documentFirstHeading">
+          <span i18n:translate="heading_search_results">
+            Search results
+          </span>
+          <span class="discreet">
+            &mdash;
+            <span i18n:translate="batch_x_items_matching_your_criteria">
+              <span i18n:name="number" class="searchResultsCount">0</span>
+              items matching your search terms
             </span>
-            <span class="discreet">
-              &mdash;
-              <span i18n:translate="batch_x_items_matching_your_criteria">
-                <span i18n:name="number" class="searchResultsCount">0</span>
-                items matching your search terms
+          </span>
+        </h1>
+        <dl class="searchResults">
+        </dl>
+
+        <div class="listingBar">
+
+          <span class="previous">
+            <a href="">
+              &laquo;
+              <span i18n:translate="batch_previous_x_items">
+                Previous
+                <span i18n:name="number">n</span>
+                items
               </span>
-            </span>
-          </h1>
-          <dl class="searchResults">
-          </dl>
+            </a>
+          </span>
 
-          <div class="listingBar">
-
-            <span class="previous">
-              <a href="">
-                &laquo;
-                <span i18n:translate="batch_previous_x_items">
-                  Previous
-                  <span i18n:name="number">n</span>
-                  items
-                </span>
-              </a>
-            </span>
-
-            <span class="next">
-              <a href="">
-                <span i18n:translate="batch_next_x_items">
-                  Next
-                  <span i18n:name="number">n</span>
-                  items
-                </span>
-                &raquo;
-              </a>
-            </span>
-
-          </div>
-
-          <div class="emptySearchResults">
-            <p><strong i18n:translate="description_no_results_found">
-                No results were found.</strong></p>
-          </div>
+          <span class="next">
+            <a href="">
+              <span i18n:translate="batch_next_x_items">
+                Next
+                <span i18n:name="number">n</span>
+                items
+              </span>
+              &raquo;
+            </a>
+          </span>
 
         </div>
+
+        <div class="emptySearchResults">
+          <p><strong i18n:translate="description_no_results_found">
+              No results were found.</strong></p>
+        </div>
+
       </div>
     </div>
-  </body>
+</div>
+</body>
 </html>
