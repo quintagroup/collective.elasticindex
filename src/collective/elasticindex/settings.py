@@ -8,6 +8,7 @@ class EmptySettings(object):
     only_published = True
     index_name = None
     server_urls = []
+    public_server_urls = []
 
 
 class SettingsAdapter(object):
@@ -62,5 +63,17 @@ class SettingsAdapter(object):
         def setter(self, value):
             self._properties.server_urls = tuple(value)
             return self._properties.server_urls
+
+        return property(getter, setter)
+
+    @apply
+    def public_server_urls():
+
+        def getter(self):
+            return self._properties.public_server_urls
+
+        def setter(self, value):
+            self._properties.public_server_urls = tuple(value)
+            return self._properties.public_server_urls
 
         return property(getter, setter)

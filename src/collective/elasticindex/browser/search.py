@@ -10,7 +10,8 @@ class SearchPage(BrowserView):
 
     def update(self):
         settings = IElasticSettings(getUtility(IPloneSiteRoot))
-        self.server_urls = json.dumps(list(settings.server_urls))
+        self.server_urls = json.dumps(list(
+                settings.public_server_urls or settings.server_urls))
         self.index_name = settings.index_name
         self.expanded = ''
         if 'section' in self.request.form or 'advanced' in self.request.form:

@@ -14,5 +14,10 @@ class IElasticSettings(Interface):
         title=u"Server URLs",
         value_type=schema.URI(),
         required=True)
+    public_server_urls = schema.List(
+        title=u"Server URLs to use for the public search",
+        description=u"If not specified regular server URLs will be used",
+        value_type=schema.URI(),
+        required=True)
 
 
