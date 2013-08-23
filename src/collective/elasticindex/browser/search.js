@@ -141,12 +141,14 @@
         };
     };
 
-    var CountDisplayPlugin = function($count) {
+    var CountDisplayPlugin = function($count, $header) {
         return {
             onempty: function() {
+                $header.show();
                 $count.text('0');
             },
             onresult: function(data) {
+                $header.show();
                 $count.text(data.total);
             }
         };
@@ -328,6 +330,10 @@
     $(document).ready(function() {
         $('.esSearchForm').each(function() {
             var $form = $(this),
+
+                $resultHeader = $form.find('h1.documentFirstHeading'),
+                $emptyResults = $form.find('div.emptySearchResults'),
+
                 $options = $form.find('div.esSearchOptions'),
                 search = ElasticSearch($form);
 
@@ -389,8 +395,12 @@
                 }, 500);
             };
 
-            search.subscribe(CountDisplayPlugin($form.find('span.searchResultsCount')));
-            search.subscribe(ResultDisplayPlugin($form.find('dl.searchResults'), $form.find('div.emptySearchResults')));
+            // hide result counter if we've not had a search yet
+            $resultHeader.hide();
+            $emptyResults.hide();
+
+            search.subscribe(CountDisplayPlugin($form.find('span.searchResultsCount'), $resultHeader, $emptyResults));
+            search.subscribe(ResultDisplayPlugin($form.find('dl.searchResults'), $emptyResults));
             search.subscribe(BatchDisplayPlugin($form.find('div.listingBar'), scroll_search));
 
             $form.find('a.esSearchOptions').bind('click', function (event) {
@@ -398,6 +408,7 @@
                 $options.slideToggle();
                 event.preventDefault();
             });
+
             $button.bind('click', function(event) {
                 schedule_search(true);
                 event.preventDefault();
