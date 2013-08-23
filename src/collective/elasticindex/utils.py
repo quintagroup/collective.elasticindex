@@ -31,11 +31,6 @@ DOCUMENT_MAPPING = {
         'enabled': True
     },
     # Stored
-    '_id' : {
-        'index': 'not_analyzed',
-        'type': 'string',
-        'store': 'yes'
-    },
     'title': ANALYZED_STRING_MAPPING,
     'subject': ANALYZED_STRING_MAPPING,
     'description': ANALYZED_STRING_MAPPING,
@@ -44,7 +39,9 @@ DOCUMENT_MAPPING = {
     'contributors': ANALYZED_STRING_MAPPING,
 
     # Not analyzed
+    '_id' : STORED_STRING_MAPPING,
     'url': STORED_STRING_MAPPING,
+    'metaType': STORED_STRING_MAPPING,
 
     # Not stored
     'created': DATE_MAPPING,
