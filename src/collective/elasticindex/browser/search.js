@@ -98,7 +98,7 @@
                             description: {fragment_size: 150, number_of_fragments: 3}
                         }
                     },
-                fields: ['url', 'title', 'description']
+                fields: ['url', 'title', 'description', 'metaType']
             };
         };
 
@@ -141,12 +141,14 @@
         };
     };
 
-    var CountDisplayPlugin = function($count) {
+    var CountDisplayPlugin = function($count, $header) {
         return {
             onempty: function() {
+                $header.show();
                 $count.text('0');
             },
             onresult: function(data) {
+                $header.show();
                 $count.text(data.total);
             }
         };
@@ -189,10 +191,14 @@
                     description = '';
                 };
             };
+
+            var mt = entry.fields.metaType;
+
             return {
                 title: title,
                 description: description,
-                url: entry.fields.url
+                url: entry.fields.url,
+                meta_type: mt.replace(/^\s+|\s+$/g, '').replace(/\s+/g,'-').toLowerCase()
             };
         };
 
@@ -210,7 +216,8 @@
                 for (i=0, len=data.hits.length; i < len; i++) {
                     entry = get_entry(data.hits[i]);
                     $result.append(
-                        '<dt class="contenttype-document"><a href="'
+                        '<dt class="contenttype-'
+                            + entry.meta_type + '"><a href="'
                             + entry.url + '">' + entry.title + '</a></dt><dd>'
                             + entry.description + '</dd>'
                     );
@@ -323,6 +330,10 @@
     $(document).ready(function() {
         $('.esSearchForm').each(function() {
             var $form = $(this),
+
+                $resultHeader = $form.find('h1.documentFirstHeading'),
+                $emptyResults = $form.find('div.emptySearchResults'),
+
                 $options = $form.find('div.esSearchOptions'),
                 search = ElasticSearch($form);
 
@@ -384,8 +395,12 @@
                 }, 500);
             };
 
-            search.subscribe(CountDisplayPlugin($form.find('span.searchResultsCount')));
-            search.subscribe(ResultDisplayPlugin($form.find('dl.searchResults'), $form.find('div.emptySearchResults')));
+            // hide result counter if we've not had a search yet
+            $resultHeader.hide();
+            $emptyResults.hide();
+
+            search.subscribe(CountDisplayPlugin($form.find('span.searchResultsCount'), $resultHeader, $emptyResults));
+            search.subscribe(ResultDisplayPlugin($form.find('dl.searchResults'), $emptyResults));
             search.subscribe(BatchDisplayPlugin($form.find('div.listingBar'), scroll_search));
 
             $form.find('a.esSearchOptions').bind('click', function (event) {
@@ -393,6 +408,7 @@
                 $options.slideToggle();
                 event.preventDefault();
             });
+
             $button.bind('click', function(event) {
                 schedule_search(true);
                 event.preventDefault();
