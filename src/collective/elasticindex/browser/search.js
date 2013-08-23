@@ -31,6 +31,7 @@
                     }
                 }],
                 query,
+                filter,
                 sort = {};
             // Sorting options.
             if (original.sort == 'created' || original.sort == 'modified') {
@@ -71,6 +72,22 @@
             } else {
                 query = queries[0];
             };
+            
+            if (original.meta_type) {
+                query = {
+                    filtered : {
+                        query : query,
+                        filter : {
+                            terms : {
+                                metaType : original.meta_type || [],
+                                execution : "or",
+                                _cache : true
+                            }
+                        }
+                    }
+                }
+            };
+
             return {
                 size: BATCH_SIZE,
                 sort: [sort],
@@ -317,6 +334,7 @@
                 $current = $form.find('input#CurrentFolderOnly'),
                 $button = $form.find('input[type=submit]'),
                 $sort = $form.find('select#sort_on'),
+                $meta_types = $form.find('input[id^="portal_type_"]'),
                 options = $options.hasClass('expanded'),
                 previous = null,
                 timeout = null;
@@ -345,6 +363,15 @@
                         if ($current.is(":checked")) {
                             query['url'] = $current.val();
                         };
+
+                        $meta_types.each(function () {
+                            if ($(this).is(':checked')) {
+                                if (query['meta_type'] === undefined) {
+                                    query['meta_type'] = [];
+                                }
+                                query['meta_type'].push('AT'+$(this).attr("value"));
+                            }
+                        });
                     };
 
                     if (force || query.term != previous && !options) {
