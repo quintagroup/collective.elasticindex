@@ -98,7 +98,7 @@
                             description: {fragment_size: 150, number_of_fragments: 3}
                         }
                     },
-                fields: ['url', 'title', 'description']
+                fields: ['url', 'title', 'description', 'metaType']
             };
         };
 
@@ -189,10 +189,14 @@
                     description = '';
                 };
             };
+
+            var mt = entry.fields.metaType;
+
             return {
                 title: title,
                 description: description,
-                url: entry.fields.url
+                url: entry.fields.url,
+                meta_type: mt.replace(/^\s+|\s+$/g, '').replace(/\s+/g,'-').toLowerCase()
             };
         };
 
@@ -210,7 +214,8 @@
                 for (i=0, len=data.hits.length; i < len; i++) {
                     entry = get_entry(data.hits[i]);
                     $result.append(
-                        '<dt class="contenttype-document"><a href="'
+                        '<dt class="contenttype-'
+                            + entry.meta_type + '"><a href="'
                             + entry.url + '">' + entry.title + '</a></dt><dd>'
                             + entry.description + '</dd>'
                     );
