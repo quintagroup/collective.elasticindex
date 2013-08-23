@@ -45,7 +45,7 @@ def get_data(content):
     except:
         text = title
     data = {'title': title,
-            'metaType': content.meta_type,
+            'metaType': content.portal_type,
             'sortableTitle': sortable_string(title),
             'description': content.Description(),
             'subject': content.Subject(),
