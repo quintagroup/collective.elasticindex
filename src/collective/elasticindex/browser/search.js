@@ -116,6 +116,11 @@
                         notifies[i](data.hits, from || 0);
                     }
                 },
+                error: function () {
+                    for (var i=0, len=empty_results.length; i < len; i++) {
+                        empty_results[i]();
+                    }
+                },
                 data: JSON.stringify(query)
             });
             return query;
@@ -141,14 +146,14 @@
         };
     };
 
-    var CountDisplayPlugin = function($count, $header) {
+    var CountDisplayPlugin = function($count, loading) {
         return {
             onempty: function() {
-                $header.show();
+                loading(false);
                 $count.text('0');
             },
             onresult: function(data) {
-                $header.show();
+                loading(false);
                 $count.text(data.total);
             }
         };
@@ -332,7 +337,12 @@
             var $form = $(this),
 
                 $resultHeader = $form.find('h1.documentFirstHeading'),
+                $searchResults = $form.find('dl.searchResults'),
+                $listingBar = $form.find('div.listingBar'),
                 $emptyResults = $form.find('div.emptySearchResults'),
+                $loader = $resultHeader.find('img'),
+                $count = $form.find('span.searchResultsCount'),
+                $discreet = $form.find('span.discreet'),
 
                 $options = $form.find('div.esSearchOptions'),
                 search = ElasticSearch($form);
@@ -350,6 +360,22 @@
                 previous = null,
                 timeout = null;
 
+            var loading = function (load) {
+                load ? $count.hide() : $count.show();
+                load ? $loader.show() : $loader.hide();
+                load ? $discreet.hide() : $discreet.show();
+                load ? $emptyResults.hide() : $emptyResults.show();
+
+                $resultHeader.show();
+            };
+
+            var hide_search_results = function () {
+                $resultHeader.hide();
+                $emptyResults.hide();
+                $listingBar.hide();
+                $searchResults.hide();
+            };
+
             var scroll_search = function(index) {
                 if (timeout !== null) {
                     clearTimeout(timeout);
@@ -362,7 +388,16 @@
                 if (timeout !== null) {
                     clearTimeout(timeout);
                 };
-                timeout = setTimeout(function () {
+ 
+                if ($query.val().length) {
+                    loading(true);
+                } else {
+                    loading(false);
+                    hide_search_results();
+                    return;
+                }
+
+               timeout = setTimeout(function () {
                     var query = {term: $query.val()},
                         meta_types = [];
 
@@ -392,16 +427,15 @@
                         previous = query.term;
                     };
                     timeout = null;
-                }, 500);
+                }, 200);
             };
 
             // hide result counter if we've not had a search yet
-            $resultHeader.hide();
-            $emptyResults.hide();
+            hide_search_results();
 
-            search.subscribe(CountDisplayPlugin($form.find('span.searchResultsCount'), $resultHeader, $emptyResults));
-            search.subscribe(ResultDisplayPlugin($form.find('dl.searchResults'), $emptyResults));
-            search.subscribe(BatchDisplayPlugin($form.find('div.listingBar'), scroll_search));
+            search.subscribe(CountDisplayPlugin($count, loading));
+            search.subscribe(ResultDisplayPlugin($searchResults, $emptyResults));
+            search.subscribe(BatchDisplayPlugin($listingBar, scroll_search));
 
             $form.find('a.esSearchOptions').bind('click', function (event) {
                 options = !options;
@@ -415,7 +449,7 @@
             });
             $options.delegate('input,select', 'change', schedule_search);
             $query.bind('change', schedule_search);
-            $query.bind('keypress', schedule_search);
+            $query.bind('keyup', schedule_search);
             if ($query.val() || options) {
                 if (options) {
                     $options.show();

@@ -11,8 +11,11 @@
 .esSearchForm .listingBar {
   display: none;
 }
-
 .esSearchForm .searchResults dt {
     padding-left : 20px;
     background: url("contenttypes-sprite.png") no-repeat scroll 0px 4px transparent;
+}
+
+.esSearchForm img {
+    padding-bottom : 0.2em;
 }

@@ -246,6 +246,10 @@
           <span i18n:translate="heading_search_results">
             Search results
           </span>
+          <img style="display:none" href="logo.png" alt="loader
+          gif" tal:attributes="src
+          string:${portal_url}/++resource++loading.gif" />
+
           <span class="discreet">
             &mdash;
             <span i18n:translate="batch_x_items_matching_your_criteria">

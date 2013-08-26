@@ -39,4 +39,9 @@
     file="search.css"
     />
 
+ <browser:resource
+    name="loading.gif"
+    file="loading.gif"
+    />
+
 </configure>
