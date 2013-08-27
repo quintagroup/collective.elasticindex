@@ -388,8 +388,10 @@
                 if (timeout !== null) {
                     clearTimeout(timeout);
                 };
- 
-                if ($query.val().length) {
+
+                var search_term = $query.val();
+
+                if (search_term.length) {
                     loading(true);
                 } else {
                     loading(false);
@@ -398,7 +400,7 @@
                 }
 
                timeout = setTimeout(function () {
-                    var query = {term: $query.val()},
+                    var query = {term: search_term},
                         meta_types = [];
 
                     if (options) {
@@ -455,7 +457,7 @@
                     $options.show();
                     $options.removeClass('expanded');
                 };
-                schedule_search();
+                schedule_search(true);
             };
         });
     });
