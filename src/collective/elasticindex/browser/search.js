@@ -336,7 +336,7 @@
         $('.esSearchForm').each(function() {
             var $form = $(this),
 
-                $resultHeader = $form.find('h1.documentFirstHeading'),
+                $resultHeader = $form.find('h1.esResultHeader'),
                 $searchResults = $form.find('dl.searchResults'),
                 $listingBar = $form.find('div.listingBar'),
                 $emptyResults = $form.find('div.emptySearchResults'),

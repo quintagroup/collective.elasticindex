@@ -41,7 +41,19 @@
               to refine your search.
             </p>
             <div class="esSearchOptions"
-                 tal:attributes="class string:esSearchOptions ${view/expanded}">
+                tal:attributes="class string:esSearchOptions ${view/expanded}">
+            <h1 class="documentFirstHeading"
+                i18n:translate="heading_advanced_search">Advanced search for content</h1>
+    
+            <p i18n:translate="description_advanced_search">
+                This search form enables you to find content on the site by
+                specifying one or more search terms.
+                <br />
+                Remember that you can use the quick search anytime, it's normally
+                good enough, this search form is just if you want to be more specific.
+            </p>
+
+
               <div class="field">
                 <input id="CurrentFolderOnly"
                        class="noborder" type="checkbox"
@@ -242,7 +254,7 @@
             </div>
           </form>
 
-        <h1 class="documentFirstHeading">
+        <h1 class="documentFirstHeading esResultHeader">
           <span i18n:translate="heading_search_results">
             Search results
           </span>
