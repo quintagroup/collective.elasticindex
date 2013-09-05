@@ -84,56 +84,59 @@
                 </div>
               </div>
 
-              <div class="field"
+              <div class="field collapsible"
                    tal:define="subjects python:here.portal_catalog.uniqueValuesFor('Subject');"
                    tal:condition="subjects">
-                <label for="Subject"
+                <label class="collapser" for="Subject"
                        i18n:translate="label_categories">
                   Categories
                 </label>
 
-                <div class="formHelp" i18n:translate="help_search_categories">
-                  Return items matching some or all of these Categories.
-                  Multiple words may be found by pressing <strong>Ctrl</strong>
-                  (or <strong>Apple</strong> key on Mac) while clicking the
-                  keywords.
+                <div class="collapse">
+
+                    <div class="formHelp" i18n:translate="help_search_categories">
+                      Return items matching some or all of these Categories.
+                      Multiple words may be found by pressing <strong>Ctrl</strong>
+                      (or <strong>Apple</strong> key on Mac) while clicking the
+                      keywords.
+                    </div>
+
+                   <select name="Subject"
+                            id="Subject"
+                            size="7"
+                            multiple="multiple">
+                   <option value="#"
+                              tal:repeat="subject subjects"
+                              tal:content="subject"
+                              tal:attributes="value subject"
+                              i18n:domain="plone-metadata"
+                              i18n:translate="">dummy</option>
+                    </select>
+                    <br />
+
+                    <input type="radio"
+                        name="Subject_usage"
+                        id="Subject_or"
+                        value=""
+                        class="noborder"
+                        tal:attributes="checked python:1"/>
+                    <label for="Subject_or" i18n:translate="description_subject_or">
+                    Match any
+                    </label>
+                    <br />
+
+                    <input type="radio"
+                        name="Subject_usage"
+                        id="Subject_and"
+                        value="and"
+                        class="noborder"
+                        tal:attributes="checked python:0"/>
+                    <label for="Subject_and" i18n:translate="description_subject_and">
+                    Match all
+                    </label>
                 </div>
 
-                <select name="Subject"
-                        id="Subject"
-                        size="7"
-                        multiple="multiple">
-                  <option value="#"
-                          tal:repeat="subject subjects"
-                          tal:content="subject"
-                          tal:attributes="value subject"
-                          i18n:domain="plone-metadata"
-                          i18n:translate="">dummy</option>
-                </select>
-                <br />
-
-                <input type="radio"
-                       name="Subject_usage"
-                       id="Subject_or"
-                       value=""
-                       class="noborder"
-                       tal:attributes="checked python:1"/>
-                <label for="Subject_or" i18n:translate="description_subject_or">
-                  Match any
-                </label>
-                <br />
-
-                <input type="radio"
-                       name="Subject_usage"
-                       id="Subject_and"
-                       value="and"
-                       class="noborder"
-                       tal:attributes="checked python:0"/>
-                <label for="Subject_and" i18n:translate="description_subject_and">
-                  Match all
-                </label>
               </div>
-
 
               <div class="field collapsible"
                    tal:define="portal context/@@plone_portal_state/portal;
