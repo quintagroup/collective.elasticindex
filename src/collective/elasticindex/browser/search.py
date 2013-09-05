@@ -14,7 +14,7 @@ class SearchPage(BrowserView):
                 settings.public_server_urls or settings.server_urls))
         self.index_name = settings.index_name
         self.expanded = ''
-        if 'section' in self.request.form or 'advanced' in self.request.form:
+        if 'advanced' in self.request.form:
             self.expanded = 'expanded'
         self.request.set('disable_border', 1)
         self.request.set('disable_plone.leftcolumn', 1)

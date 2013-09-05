@@ -67,17 +67,21 @@
                 </label>
               </div>
 
-              <div class="field">
-                <label for="Contribs"
+              <div class="field collapsible">
+                <label class="collapser" for="Contribs"
                        i18n:translate="label_author">
                   Author
                 </label>
 
-                <div class="formHelp" i18n:translate="help_search_author">
-                  Return items created by a particular person.
-                </div>
+                <div class="collapse">
 
-                <input id="Contribs" name="Contribs" />
+                    <div class="formHelp" i18n:translate="help_search_author">
+                        Return items created by a particular person.
+                    </div>
+
+                    <input id="Contribs" name="Contribs" />
+
+                </div>
               </div>
 
               <div class="field"
@@ -218,29 +222,32 @@
                 </div>
               </div>
 
-              <div class="field">
-                <label for="sort_on"
+              <div class="field collapsible">
+                <label class="collapser" for="sort_on"
                        i18n:translate="">Sort results</label>
+                <div class="collapse">
 
-                <div class="formHelp" i18n:translate="">
-                  Sort the Search Results based on the selected criterion
+                    <div class="formHelp" i18n:translate="">
+                    Sort the Search Results based on the selected criterion
+                    </div>
+
+                    <select name="sort_on"
+                            id="sort_on">
+                    <option value="" i18n:translate="">
+                        Relevance
+                    </option>
+                    <option value="created" i18n:translate="">
+                        Creation Date
+                    </option>
+                    <option value="modified" i18n:translate="">
+                        Modification Date
+                    </option>
+                    <option value="title" i18n:translate="">
+                        Title
+                    </option>
+                    </select>
                 </div>
 
-                <select name="sort_on"
-                        id="sort_on">
-                  <option value="" i18n:translate="">
-                    Relevance
-                  </option>
-                  <option value="created" i18n:translate="">
-                    Creation Date
-                  </option>
-                  <option value="modified" i18n:translate="">
-                    Modification Date
-                  </option>
-                  <option value="title" i18n:translate="">
-                    Title
-                  </option>
-                </select>
               </div>
 
             <div class="formControls">
