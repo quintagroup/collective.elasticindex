@@ -29,17 +29,25 @@
                    value="Search"
                    i18n:attributes="value label_search;"/>
 
-            <p class="discreet"
-               i18n:translate="search_results_advanced">
-              Did you not find what you were looking for? Try the
-              <span i18n:name="advanced_search">
-                <a class="esSearchOptions" href=""
-                   i18n:translate="search_results_advanced_link">
-                  Advanced Search
-                </a>
-              </span>
-              to refine your search.
-            </p>
+            <div id="esSearchSummaryBox" class="search-summary box" style="display:none">
+                <strong>Search term(s):</strong>
+                <span id="esSearchTerm"></span>
+                <span id="esSearchLocation">
+                    <strong>in this location:</strong>
+                </span>
+                <p class="discreet"
+                    i18n:translate="search_results_advanced">
+                    Did you not find what you were looking for? Try the
+                    <span i18n:name="advanced_search">
+                    <a class="esSearchOptions" href=""
+                        i18n:translate="search_results_advanced_link">
+                        Advanced Search
+                    </a>
+                    </span>
+                    to refine your search.
+                </p>
+            </div>
+
             <div class="esSearchOptions"
                 tal:attributes="class string:esSearchOptions ${view/expanded}">
             <h1 class="documentFirstHeading"
