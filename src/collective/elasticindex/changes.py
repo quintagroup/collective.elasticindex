@@ -56,6 +56,7 @@ def get_data(content):
     created = content.created()
     if created is not (None, 'None'):
         data['created'] = created.strftime('%Y-%m-%dT%H:%M:%S')
+        data['publishedYear'] = created.year
     modified = content.modified()
     if modified is not (None, 'None'):
         data['modified'] = modified.strftime('%Y-%m-%dT%H:%M:%S')

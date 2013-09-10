@@ -26,6 +26,12 @@ DATE_MAPPING = {
     'store': 'no'
 }
 
+INT_MAPPING = {
+    'index': 'not_analyzed',
+    'type': 'integer',
+    'store': 'no'
+}
+
 DOCUMENT_MAPPING = {
     '_index': {
         'enabled': True
@@ -46,6 +52,7 @@ DOCUMENT_MAPPING = {
     # Not stored
     'created': DATE_MAPPING,
     'modified': DATE_MAPPING,
+    'publishedYear': INT_MAPPING,
     'sortableTitle': STRING_MAPPING,
 }
 

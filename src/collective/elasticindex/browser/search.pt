@@ -223,7 +223,50 @@
                     </option>
                   </select>
                 </div>
+            </div>
+
+            <div class="field collapsible">
+                <label for="Published" class="collapser"
+                       i18n:translate="label_published">
+                  Publication year
+              </label>
+
+              <div class="collapse">
+                <div class="formHelp" i18n:translate="help_search_published">
+                    Return items published before or after a certain year
+                    (yyyy).
+                </div>
+
+                <input id="Published" name="Published" size="4"
+                maxlength="4" />
+                <br />
+
+                <input type="radio"
+                    name="Published_range"
+                    id="Published_before"
+                    value="lt"
+                    class="noborder"
+                    tal:attributes="checked python:1"/>
+                <label for="Published_before"
+                    i18n:translate="description_published_before">
+                Before
+                </label>
+                <br />
+
+                <input type="radio"
+                    name="Published_range"
+                    id="Published_after"
+                    value="gt"
+                    class="noborder"
+                    tal:attributes="checked python:0"/>
+                <label for="Published_after"
+                    i18n:translate="description_published_after">
+                After
+                </label>
+
               </div>
+            </div>
+
 
               <div class="field collapsible">
                 <label class="collapser" for="sort_on"

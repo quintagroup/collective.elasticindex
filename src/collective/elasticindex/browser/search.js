@@ -48,6 +48,15 @@
             if (original.created) {
                 queries.push({range: {created: {from: original.created}}});
             };
+            if (original.published_year) {
+                var pub_year = original.published_year;
+                if (pub_year.match(/^\d{4}$/)) {
+                    var range_op = original.published_before ? 'lt' : 'gt';
+                    var pub_query = {range : {publishedYear : {}}};
+                    pub_query.range.publishedYear[range_op] = pub_year;
+                    queries.push(pub_query);
+                }
+            };
             if (original.url) {
                 queries.push({prefix: {url: original.url}});
             };
@@ -352,6 +361,8 @@
                 $subject = $form.find('select#Subject'),
                 $subject_operator = $form.find('input#Subject_and'),
                 $since = $form.find('select#created'),
+                $published = $form.find('input#Published'),
+                $publishedBefore = $form.find('input#Published_before'),
                 $current = $form.find('input#CurrentFolderOnly'),
                 $button = $form.find('input[type=submit]'),
                 $sort = $form.find('select#sort_on'),
@@ -409,6 +420,9 @@
                         query['subject_and'] = $subject_operator.is(":checked");
                         query['created'] = $since.val();
                         query['sort'] = $sort.val();
+                        query['published_year'] = $published.val();
+                        query['published_before'] = $publishedBefore.is(":checked");
+
                         if ($current.is(":checked")) {
                             query['url'] = $current.val();
                         };
