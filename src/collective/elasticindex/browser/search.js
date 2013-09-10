@@ -353,6 +353,10 @@
                 $count = $form.find('span.searchResultsCount'),
                 $discreet = $form.find('span.discreet'),
 
+                $summaryBox = $form.find('div#esSearchSummaryBox'),
+                $summaryTerm = $summaryBox.find('span#esSearchTerm'),
+                $summaryLocation = $summaryBox.find('span#esSearchLocation'),
+
                 $options = $form.find('div.esSearchOptions'),
                 search = ElasticSearch($form);
 
@@ -371,11 +375,24 @@
                 previous = null,
                 timeout = null;
 
+            var display_summary = function () {
+                $summaryTerm.text('"'+$query.val()+'"');
+                if ($current.is(':checked')) {
+                    var loc = $current.val().replace(/^.*?:\/{2}/,'');
+                    $summaryLocation.append('"'+loc+'"');
+                    $summaryLocation.show();
+                } else {
+                    $summaryLocation.hide();
+                }
+                $summaryBox.show();
+            };
+
             var loading = function (load) {
-                load ? $count.hide() : $count.show();
-                load ? $loader.show() : $loader.hide();
-                load ? $discreet.hide() : $discreet.show();
+                load ? $count.hide()        : $count.show();
+                load ? $loader.show()       : $loader.hide();
+                load ? $discreet.hide()     : $discreet.show();
                 load ? $emptyResults.hide() : $emptyResults.show();
+                load ? $summaryBox.hide()   : display_summary();
 
                 $resultHeader.show();
             };
@@ -385,6 +402,7 @@
                 $emptyResults.hide();
                 $listingBar.hide();
                 $searchResults.hide();
+                $summaryBox.hide();
             };
 
             var scroll_search = function(index) {

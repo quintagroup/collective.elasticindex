@@ -21,3 +21,9 @@
 .esSearchForm img {
     padding-bottom : 0.2em;
 }
+
+#esSearchSummaryBox {
+    margin  : 1em 0 1.2em; 
+    border  : 1px solid #ddd; 
+    padding : 3px 10px;
+}
