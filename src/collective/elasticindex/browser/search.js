@@ -380,9 +380,9 @@
                 if ($current.is(':checked')) {
                     var loc = $current.val().replace(/^.*?:\/{2}/,'');
                     $summaryLocation.text('"'+loc+'"');
-                    $summaryLocation.show();
+                    $summaryLocation.parent().show();
                 } else {
-                    $summaryLocation.hide();
+                    $summaryLocation.parent().hide();
                 }
                 $summaryBox.show();
             };
