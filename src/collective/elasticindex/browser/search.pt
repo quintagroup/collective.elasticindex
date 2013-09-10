@@ -33,7 +33,7 @@
                 <strong>Search term(s):</strong>
                 <span id="esSearchTerm"></span>
                 <span id="esSearchLocation">
-                    <strong>in this location:</strong>
+                    <strong>in this location:</strong><span></span>
                 </span>
                 <p class="discreet"
                     i18n:translate="search_results_advanced">

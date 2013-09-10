@@ -355,7 +355,7 @@
 
                 $summaryBox = $form.find('div#esSearchSummaryBox'),
                 $summaryTerm = $summaryBox.find('span#esSearchTerm'),
-                $summaryLocation = $summaryBox.find('span#esSearchLocation'),
+                $summaryLocation = $summaryBox.find('span#esSearchLocation span'),
 
                 $options = $form.find('div.esSearchOptions'),
                 search = ElasticSearch($form);
@@ -379,7 +379,7 @@
                 $summaryTerm.text('"'+$query.val()+'"');
                 if ($current.is(':checked')) {
                     var loc = $current.val().replace(/^.*?:\/{2}/,'');
-                    $summaryLocation.append('"'+loc+'"');
+                    $summaryLocation.text('"'+loc+'"');
                     $summaryLocation.show();
                 } else {
                     $summaryLocation.hide();
