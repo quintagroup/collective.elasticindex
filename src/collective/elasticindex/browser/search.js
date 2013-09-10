@@ -13,7 +13,7 @@
 
         var get_url = function() {
             var index = Math.floor(Math.random() * search_urls.length);
-            return [search_urls[index], index_name, ''].join('/');
+            return [search_urls[index], index_name, '_search'].join('/');
         };
 
         var build_query = function(original) {
