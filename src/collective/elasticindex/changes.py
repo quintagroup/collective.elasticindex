@@ -12,6 +12,8 @@ import transaction
 import logging
 import re
 
+from Acquisition import aq_base
+
 from collective.elasticindex.interfaces import IElasticSettings
 from collective.elasticindex.utils import connect
 
@@ -53,13 +55,24 @@ def get_data(content):
             'url': content.absolute_url(),
             'author': content.Creator(),
             'content': text}
+
+    if hasattr(aq_base(content), 'pub_date_year'):
+        publishedYear = getattr(content, 'pub_date_year')
+
     created = content.created()
     if created is not (None, 'None'):
         data['created'] = created.strftime('%Y-%m-%dT%H:%M:%S')
-        data['publishedYear'] = created.year
+        if publishedYear is None:
+            publishedYear = int(created.year)
+
     modified = content.modified()
     if modified is not (None, 'None'):
         data['modified'] = modified.strftime('%Y-%m-%dT%H:%M:%S')
+        if publishedYear is None:
+            publishedYear = int(modified.year)
+
+    data['publishedYear'] = publishedYear
+
     return uid, data
 
 def list_content(content, callback):
