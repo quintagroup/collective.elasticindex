@@ -56,6 +56,8 @@ def get_data(content):
             'author': content.Creator(),
             'content': text}
 
+    publishedYear = None
+
     if hasattr(aq_base(content), 'pub_date_year'):
         publishedYear = getattr(content, 'pub_date_year')
 
