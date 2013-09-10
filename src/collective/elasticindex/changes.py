@@ -56,24 +56,16 @@ def get_data(content):
             'author': content.Creator(),
             'content': text}
 
-    publishedYear = None
-
     if hasattr(aq_base(content), 'pub_date_year'):
-        publishedYear = getattr(content, 'pub_date_year')
+        data['publishedYear'] = getattr(content, 'pub_date_year')
 
     created = content.created()
     if created is not (None, 'None'):
         data['created'] = created.strftime('%Y-%m-%dT%H:%M:%S')
-        if publishedYear is None:
-            publishedYear = int(created.year)
 
     modified = content.modified()
     if modified is not (None, 'None'):
         data['modified'] = modified.strftime('%Y-%m-%dT%H:%M:%S')
-        if publishedYear is None:
-            publishedYear = int(modified.year)
-
-    data['publishedYear'] = publishedYear
 
     return uid, data
 
