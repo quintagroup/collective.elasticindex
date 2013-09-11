@@ -1,4 +1,7 @@
-
+/* align form elements to the left */
+.esSearchForm form.searchPage {
+    text-align: left;
+}
 
 .esSearchForm .searchResults em {
   background-color: #FFFFAA;
@@ -25,14 +28,14 @@
 #esSearchSummaryBox {
     font: 1em/1.5em "Lucida Grande",Verdana,Arial,sans-serif !important;
     text-align : left;
-    margin: 1em 0 1.2em; 
-    border: 1px solid #ddd; 
+    margin: 1em 0 1.2em;
+    border: 1px solid #ddd;
     padding: 3px 10px;
     height: 55px;
 }
 
 #esSearchSummaryBox p span {
-    margin: 2px 0; 
+    margin: 2px 0;
     padding-bottom: 17px;
     background: url(arrowDown.png) center 20px no-repeat;
 }
