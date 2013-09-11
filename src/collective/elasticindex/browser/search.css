@@ -47,7 +47,7 @@
 
 .esSearchForm #esSearchSummaryBox p.searchOptions {
     padding-bottom: 31px;
-    background: url(arrowDown.png) center 100px no-repeat;
+    background: url(arrowDown.png) 100px center no-repeat;
 }
 
 /* needs specific selector to win style */
