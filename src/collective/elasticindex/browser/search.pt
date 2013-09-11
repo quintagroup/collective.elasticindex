@@ -42,7 +42,7 @@
                           i18n:translate="search_results_advanced_link">
                     Advanced Search</strong>.
                 </p>
-                <p class=""searchOptions>
+                <p class="searchOptions">
                   <a class="esSearchOptions" href="">
                     Fold/unfold Advanced Search options</a>
                 </p>
