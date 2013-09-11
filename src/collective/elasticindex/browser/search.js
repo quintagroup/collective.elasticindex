@@ -436,9 +436,13 @@
 
                 var search_term = $query.val();
 
-               timeout = setTimeout(function () {
+                timeout = setTimeout(function () {
                     var query = {term: search_term},
                         meta_types = [];
+
+                    if ($current.is(":checked")) {
+                        query['url'] = $current.val();
+                    };
 
                     if (options) {
                         query['contributors'] = $author.val();
@@ -448,10 +452,6 @@
                         query['sort'] = $sort.val();
                         query['published_year'] = $published.val();
                         query['published_before'] = $published_before.is(":checked");
-
-                        if ($current.is(":checked")) {
-                            query['url'] = $current.val();
-                        };
 
                         $meta_types.each(function () {
                             var $field = $(this);
