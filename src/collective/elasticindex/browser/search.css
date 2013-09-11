@@ -9,7 +9,10 @@
 .esSearchForm div.esSearchOptions {
   text-align: left;
 }
+.esSearchForm .esResultHeader,
+.esSearchForm #esSearchLocation,
 .esSearchForm .searchResults,
+.esSearchForm .emptySearchResults,
 .esSearchForm div.esSearchOptions,
 .esSearchForm .listingBar {
   display: none;
@@ -25,7 +28,7 @@
     padding-bottom : 0.2em;
 }
 
-#esSearchSummaryBox {
+.esSearchForm #esSearchSummaryBox {
     font: 1em/1.5em "Lucida Grande",Verdana,Arial,sans-serif !important;
     text-align : left;
     margin: 1em 0 1.2em;
@@ -34,12 +37,12 @@
     height: 55px;
 }
 
-#esSearchSummaryBox p span {
+.esSearchForm #esSearchSummaryBox p span {
     margin: 2px 0;
     padding-bottom: 17px;
     background: url(arrowDown.png) center 21px no-repeat;
 }
 
-#content a.esSearchOptions {
+.esSearchForm a.esSearchOptions {
     border: 0;
 }

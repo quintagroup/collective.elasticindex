@@ -1,23 +1,41 @@
 
-(function($) {
+(function($, JSON) {
     // Hang on in there. We have jQuery, 1.4.
     var BATCH_SIZE = 15;
 
     var ElasticSearch = function($form) {
         var search_urls = $form.data('server-urls'),
             index_name = $form.data('index-name');
-        var empty_results = [],
+        // List of callbacks during the various search stages.
+        var start_query = [],
+            empty_results = [],
             results = [];
+        // Private variables.
         var previous_query = null,
             start_from = 0;
 
         var get_url = function() {
+            // Return an URL where to post the search query.
             var index = Math.floor(Math.random() * search_urls.length);
             return [search_urls[index], index_name, '_search'].join('/');
         };
 
         var build_query = function(original) {
-            var queries = [{
+            // Build the search query out of the the collect data.
+            var queries = [],
+                query = null,
+                sort = {};
+            // Sorting options.
+            if (original.sort == 'created' || original.sort == 'modified') {
+                sort[original.sort] = 'desc';
+            } else if (original.sort == 'title') {
+                sort = "sortableTitle";
+            } else {
+                sort = "_score";
+            };
+            // Other criterias
+            if (original.term) {
+                queries.push({
                     query_string : {
                         query: original.term,
                         default_operator: "AND",
@@ -29,19 +47,8 @@
                             "content"
                         ]
                     }
-                }],
-                query,
-                filter,
-                sort = {};
-            // Sorting options.
-            if (original.sort == 'created' || original.sort == 'modified') {
-                sort[original.sort] = 'desc';
-            } else if (original.sort == 'title') {
-                sort = "sortableTitle";
-            } else {
-                sort = "_score";
+                });
             };
-            // Other criterias
             if (original.contributors) {
                 queries.push({match: {contributors: original.contributors}});
             };
@@ -53,6 +60,7 @@
                 if (pub_year.match(/^\d{4}$/)) {
                     var range_op = original.published_before ? 'lt' : 'gt';
                     var pub_query = {range : {publishedYear : {}}};
+
                     pub_query.range.publishedYear[range_op] = pub_year;
                     queries.push(pub_query);
                 }
@@ -76,31 +84,34 @@
                     queries.push(subjects[0]);
                 };
             };
-            if (queries.length > 1) {
-                query = {bool: {must: queries}};
-            } else {
-                query = queries[0];
-            };
 
-            if (original.meta_type) {
-                query = {
-                    filtered : {
-                        query : query,
-                        filter : {
-                            terms : {
-                                metaType : original.meta_type || [],
-                                execution : "or",
-                                _cache : true
+            if (queries.length) {
+                if (queries.length > 1) {
+                    query = {bool: {must: queries}};
+                } else {
+                    query = queries[0];
+                };
+
+                // Filters
+                if (original.meta_type) {
+                    query = {
+                        filtered : {
+                            query : query,
+                            filter : {
+                                terms : {
+                                    metaType : original.meta_type,
+                                    execution : "or",
+                                    _cache : true
+                                }
                             }
                         }
-                    }
-                }
+                    };
+                };
             };
 
-            return {
+            var result = {
                 size: BATCH_SIZE,
                 sort: [sort],
-                query: query,
                 highlight: {
                         fields: {
                             title: {number_of_fragments: 0},
@@ -109,10 +120,14 @@
                     },
                 fields: ['url', 'title', 'description', 'metaType']
             };
+            if (query !== null) {
+                result['query'] = query;
+            };
+            return result;
         };
 
         var do_search = function(query, from) {
-            // Form up any query here
+            // Post the search query to the server.
             query['from'] = from || 0;
             $.ajax({
                 url: get_url(),
@@ -143,27 +158,65 @@
                 if (plugin.onresult !== undefined) {
                     results.push(plugin.onresult);
                 };
+                if (plugin.onstart !== undefined) {
+                    start_query.push(plugin.onstart);
+                };
             },
             scroll: function(index) {
                 if (previous_query !== null) {
                     do_search(previous_query, index);
                 };
             },
-            search: function(term) {
-                previous_query = do_search(build_query(term));
+            search: function(query) {
+                for (var i=0, len=start_query.length; i < len; i++) {
+                    start_query[i](query);
+                };
+                previous_query = do_search(build_query(query));
             }
         };
     };
 
-    var CountDisplayPlugin = function($count, loading) {
+    var SummaryDisplayPlugin = function($summary) {
+        var $term = $summary.find('span#esSearchTerm'),
+            $location = $summary.find('span#esSearchLocation span');
+
         return {
+            onstart: function(query) {
+                $term.text('"' + query.term + '"');
+                if (query.url) {
+                    $location.text('"' + query.url.replace(/^.*?:\/{2}/,'') + '"');
+                    $location.parent().show();
+                } else {
+                    $location.parent().hide();
+                };
+            }
+        };
+    };
+
+    var ResultHeaderDisplayPlugin = function($header) {
+        var $loader = $header.find('img'),
+            $message = $header.find('span.discreet'),
+            $count = $header.find('span.searchResultsCount'),
+            initial = true;
+
+        return {
+            onstart: function() {
+                if (initial) {
+                    $header.show();
+                    initial = false;
+                };
+                $loader.show();
+                $message.hide();
+            },
             onempty: function() {
-                loading(false);
                 $count.text('0');
+                $loader.hide();
+                $message.show();
             },
             onresult: function(data) {
-                loading(false);
                 $count.text(data.total);
+                $loader.hide();
+                $message.show();
             }
         };
     };
@@ -178,6 +231,7 @@
             }
             return string;
         };
+
         var truncate_text = function(string) {
             return string.length > 256 ? string.substr(0, 256) + ' &hellip;' : string;
         };
@@ -200,19 +254,17 @@
             };
             if (description === null) {
                 if (entry.fields.description) {
-                    description = truncate_text(entry.fields.description);
+                    description = trim_punctuation(truncate_text(entry.fields.description));
                 } else {
                     description = '';
                 };
             };
 
-            var mt = entry.fields.metaType;
-
             return {
                 title: title,
                 description: description,
                 url: entry.fields.url,
-                meta_type: mt.replace(/^\s+|\s+$/g, '').replace(/\s+/g,'-').toLowerCase()
+                meta_type: entry.fields.metaType.replace(/^\s+|\s+$/g, '').replace(/\s+/g,'-').toLowerCase()
             };
         };
 
@@ -349,13 +401,7 @@
                 $searchResults = $form.find('dl.searchResults'),
                 $listingBar = $form.find('div.listingBar'),
                 $emptyResults = $form.find('div.emptySearchResults'),
-                $loader = $resultHeader.find('img'),
-                $count = $form.find('span.searchResultsCount'),
-                $discreet = $form.find('span.discreet'),
-
                 $summaryBox = $form.find('div#esSearchSummaryBox'),
-                $summaryTerm = $summaryBox.find('span#esSearchTerm'),
-                $summaryLocation = $summaryBox.find('span#esSearchLocation span'),
 
                 $options = $form.find('div.esSearchOptions'),
                 search = ElasticSearch($form);
@@ -366,7 +412,7 @@
                 $subject_operator = $form.find('input#Subject_and'),
                 $since = $form.find('select#created'),
                 $published = $form.find('input#Published'),
-                $publishedBefore = $form.find('input#Published_before'),
+                $published_before = $form.find('input#Published_before'),
                 $current = $form.find('input#CurrentFolderOnly'),
                 $button = $form.find('input[type=submit]'),
                 $sort = $form.find('select#sort_on'),
@@ -374,36 +420,6 @@
                 options = $options.hasClass('expanded'),
                 previous = null,
                 timeout = null;
-
-            var display_summary = function () {
-                $summaryTerm.text('"'+$query.val()+'"');
-                if ($current.is(':checked')) {
-                    var loc = $current.val().replace(/^.*?:\/{2}/,'');
-                    $summaryLocation.text('"'+loc+'"');
-                    $summaryLocation.parent().show();
-                } else {
-                    $summaryLocation.parent().hide();
-                }
-                $summaryBox.show();
-            };
-
-            var loading = function (load) {
-                load ? $count.hide()        : $count.show();
-                load ? $loader.show()       : $loader.hide();
-                load ? $discreet.hide()     : $discreet.show();
-                load ? $emptyResults.hide() : $emptyResults.show();
-                load ? $summaryBox.hide()   : display_summary();
-
-                $resultHeader.show();
-            };
-
-            var hide_search_results = function () {
-                $resultHeader.hide();
-                $emptyResults.hide();
-                $listingBar.hide();
-                $searchResults.hide();
-                $summaryBox.hide();
-            };
 
             var scroll_search = function(index) {
                 if (timeout !== null) {
@@ -420,14 +436,6 @@
 
                 var search_term = $query.val();
 
-                if (search_term.length) {
-                    loading(true);
-                } else {
-                    loading(false);
-                    hide_search_results();
-                    return;
-                }
-
                timeout = setTimeout(function () {
                     var query = {term: search_term},
                         meta_types = [];
@@ -439,7 +447,7 @@
                         query['created'] = $since.val();
                         query['sort'] = $sort.val();
                         query['published_year'] = $published.val();
-                        query['published_before'] = $publishedBefore.is(":checked");
+                        query['published_before'] = $published_before.is(":checked");
 
                         if ($current.is(":checked")) {
                             query['url'] = $current.val();
@@ -461,13 +469,11 @@
                         previous = query.term;
                     };
                     timeout = null;
-                }, 200);
+                }, 300);
             };
 
-            // hide result counter if we've not had a search yet
-            hide_search_results();
-
-            search.subscribe(CountDisplayPlugin($count, loading));
+            search.subscribe(SummaryDisplayPlugin($summaryBox));
+            search.subscribe(ResultHeaderDisplayPlugin($resultHeader));
             search.subscribe(ResultDisplayPlugin($searchResults, $emptyResults));
             search.subscribe(BatchDisplayPlugin($listingBar, scroll_search));
 
@@ -494,4 +500,4 @@
         });
     });
 
-})(jQuery);
+})(jQuery, JSON);

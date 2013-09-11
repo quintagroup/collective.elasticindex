@@ -29,22 +29,23 @@
                    value="Search"
                    i18n:attributes="value label_search;"/>
 
-            <div id="esSearchSummaryBox" class="search-summary box" style="display:none">
+            <div id="esSearchSummaryBox" class="search-summary box">
                 <strong>Search term:</strong>
-                <span id="esSearchTerm"></span>
+                <span id="esSearchTerm">""</span>
                 <span id="esSearchLocation">
                     <strong>in this location:</strong><span></span>
                 </span>
-                <p
-                    i18n:translate="search_results_advanced">
-                    Did you not find what you were looking for? You can refine
-                    your search with <strong>Advanced Search</strong>.
-                    <br/>
-                    <span>
-                        <a class="esSearchOptions" href="">
-                            Fold/unfold Advanced Search options
-                        </a>
-                    </span>
+                <p i18n:translate="search_results_advanced">
+                  Did you not find what you were looking for? You can refine
+                  your search with
+                  <strong i18n:name="advanced_search"
+                          i18n:translate="search_results_advanced_link">
+                    Advanced Search
+                  </strong>.
+                </p>
+                <p>
+                  <a class="esSearchOptions" href="">
+                    Fold/unfold Advanced Search options</a>
                 </p>
             </div>
 
@@ -319,9 +320,8 @@
           <span i18n:translate="heading_search_results">
             Search results
           </span>
-          <img style="display:none" href="logo.png" alt="loader
-          gif" tal:attributes="src
-          string:${portal_url}/++resource++loading.gif" />
+          <img style="display:none" href="logo.png" alt="Loading ...."
+               tal:attributes="src string:${portal_url}/++resource++loading.gif" />
 
           <span class="discreet">
             &mdash;
