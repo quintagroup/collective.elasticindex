@@ -28,6 +28,10 @@
     padding-bottom : 0.2em;
 }
 
+.esResultHeader {
+    height: 20px;
+}
+
 .esSearchForm #esSearchSummaryBox {
     font: 1em/1.5em "Lucida Grande",Verdana,Arial,sans-serif !important;
     text-align : left;
