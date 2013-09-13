@@ -267,7 +267,7 @@
                          value="equal"
                          class="noborder"
                          tal:attributes="checked python:0"/>
-                  <label for="Published_after"
+                  <label for="Published_in"
                          i18n:translate="description_published_in">
                     In
                   </label>
