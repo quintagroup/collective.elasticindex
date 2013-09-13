@@ -3,6 +3,13 @@
     // Hang on in there. We have jQuery, 1.4.
     var BATCH_SIZE = 15;
 
+    var validate_year = function(year) {
+        if (year.match(/^\d{4}$/)) {
+            return year;
+        };
+        return null;
+    };
+
     var ElasticSearch = function($form) {
         var search_urls = $form.data('server-urls'),
             index_name = $form.data('index-name');
@@ -11,8 +18,7 @@
             empty_results = [],
             results = [];
         // Private variables.
-        var previous_query = null,
-            start_from = 0;
+        var previous_query = null;
 
         var get_url = function() {
             // Return an URL where to post the search query.
@@ -23,6 +29,7 @@
         var build_query = function(original) {
             // Build the search query out of the the collect data.
             var queries = [],
+                filters = [],
                 query = null,
                 sort = {};
             // Sorting options.
@@ -33,7 +40,7 @@
             } else {
                 sort = "_score";
             };
-            // Other criterias
+            // Search criterias
             if (original.term) {
                 queries.push({
                     query_string : {
@@ -56,14 +63,11 @@
                 queries.push({range: {created: {from: original.created}}});
             };
             if (original.published_year) {
-                var pub_year = original.published_year;
-                if (pub_year.match(/^\d{4}$/)) {
-                    var range_op = original.published_before ? 'lt' : 'gt';
-                    var pub_query = {range : {publishedYear : {}}};
-
-                    pub_query.range.publishedYear[range_op] = pub_year;
-                    queries.push(pub_query);
-                }
+                if (original.published_before) {
+                    queries.push({range: {publishedYear: {lt: original.published_year}}});
+                } else if (original.published_after) {
+                    queries.push({range: {publishedYear: {gt: original.published_year}}});
+                };
             };
             if (original.url) {
                 queries.push({prefix: {url: original.url}});
@@ -94,17 +98,33 @@
 
                 // Filters
                 if (original.meta_type) {
-                    query = {
-                        filtered : {
-                            query : query,
-                            filter : {
-                                terms : {
-                                    metaType : original.meta_type,
-                                    execution : "or",
-                                    _cache : true
+                    filters.push({
+                        terms: {
+                            metaType: original.meta_type,
+                            execution: "or"
+                        }
+                    });
+                };
+                if (original.published_year && original.published_in) {
+                    filters.push({term: {publishedYear: original.published_year}});
+                };
+                if (filters.length) {
+                    if (filters.length > 1) {
+                        query = {
+                            filtered: {
+                                query: query,
+                                filter: {
+                                    and: filters
                                 }
                             }
-                        }
+                        };
+                    } else {
+                        query = {
+                            filtered: {
+                                query: query,
+                                filter: filters[0]
+                            }
+                        };
                     };
                 };
             };
@@ -413,6 +433,8 @@
                 $since = $form.find('select#created'),
                 $published = $form.find('input#Published'),
                 $published_before = $form.find('input#Published_before'),
+                $published_in = $form.find('input#Published_in'),
+                $published_after = $form.find('input#Published_after'),
                 $current = $form.find('input#CurrentFolderOnly'),
                 $button = $form.find('input[type=submit]'),
                 $sort = $form.find('select#sort_on'),
@@ -450,8 +472,10 @@
                         query['subject_and'] = $subject_operator.is(":checked");
                         query['created'] = $since.val();
                         query['sort'] = $sort.val();
-                        query['published_year'] = $published.val();
+                        query['published_year'] = validate_year($published.val());
                         query['published_before'] = $published_before.is(":checked");
+                        query['published_in'] = $published_in.is(":checked");
+                        query['published_after'] = $published_after.is(":checked");
 
                         $meta_types.each(function () {
                             var $field = $(this);

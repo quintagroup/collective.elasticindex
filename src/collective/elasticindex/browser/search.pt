@@ -30,37 +30,37 @@
                    i18n:attributes="value label_search;"/>
 
             <div id="esSearchSummaryBox" class="search-summary box">
-                <strong>Search term:</strong>
-                <span id="esSearchTerm">""</span>
-                <span id="esSearchLocation">
-                    <strong>in this location:</strong><span></span>
-                </span>
-                <p i18n:translate="search_results_advanced">
-                  Did you not find what you were looking for? You can refine
-                  your search with
-                  <strong i18n:name="advanced_search"
-                          i18n:translate="search_results_advanced_link">
-                    Advanced Search
-                  </strong>.
-                </p>
-                <p>
-                  <a class="esSearchOptions" href="">
-                    Fold/unfold Advanced Search options</a>
-                </p>
+              <strong>Search term:</strong>
+              <span id="esSearchTerm">""</span>
+              <span id="esSearchLocation">
+                <strong>in this location:</strong><span></span>
+              </span>
+              <p i18n:translate="search_results_advanced">
+                Did you not find what you were looking for? You can refine
+                your search with
+                <strong i18n:name="advanced_search"
+                        i18n:translate="search_results_advanced_link">
+                  Advanced Search
+                </strong>.
+              </p>
+              <p>
+                <a class="esSearchOptions" href="">
+                  Fold/unfold Advanced Search options</a>
+              </p>
             </div>
 
             <div class="esSearchOptions"
-                tal:attributes="class string:esSearchOptions ${view/expanded}">
-            <h1 class="documentFirstHeading"
-                i18n:translate="heading_advanced_search">Advanced search for content</h1>
+                 tal:attributes="class string:esSearchOptions ${view/expanded}">
+              <h1 class="documentFirstHeading"
+                  i18n:translate="heading_advanced_search">Advanced search for content</h1>
 
-            <p i18n:translate="description_advanced_search">
+              <p i18n:translate="description_advanced_search">
                 This search form enables you to find content on the site by
                 specifying one or more search terms.
                 <br />
                 Remember that you can use the quick search anytime, it's normally
                 good enough, this search form is just if you want to be more specific.
-            </p>
+              </p>
 
 
               <div class="field">
@@ -84,11 +84,11 @@
 
                 <div class="collapse">
 
-                    <div class="formHelp" i18n:translate="help_search_author">
-                        Return items created by a particular person.
-                    </div>
+                  <div class="formHelp" i18n:translate="help_search_author">
+                    Return items created by a particular person.
+                  </div>
 
-                    <input id="Contribs" name="Contribs" />
+                  <input id="Contribs" name="Contribs" />
 
                 </div>
               </div>
@@ -103,46 +103,46 @@
 
                 <div class="collapse">
 
-                    <div class="formHelp" i18n:translate="help_search_categories">
-                      Return items matching some or all of these Categories.
-                      Multiple words may be found by pressing <strong>Ctrl</strong>
-                      (or <strong>Apple</strong> key on Mac) while clicking the
-                      keywords.
-                    </div>
+                  <div class="formHelp" i18n:translate="help_search_categories">
+                    Return items matching some or all of these Categories.
+                    Multiple words may be found by pressing <strong>Ctrl</strong>
+                    (or <strong>Apple</strong> key on Mac) while clicking the
+                    keywords.
+                  </div>
 
-                   <select name="Subject"
-                            id="Subject"
-                            size="7"
-                            multiple="multiple">
-                   <option value="#"
-                              tal:repeat="subject subjects"
-                              tal:content="subject"
-                              tal:attributes="value subject"
-                              i18n:domain="plone-metadata"
-                              i18n:translate="">dummy</option>
-                    </select>
-                    <br />
+                  <select name="Subject"
+                          id="Subject"
+                          size="7"
+                          multiple="multiple">
+                    <option value="#"
+                            tal:repeat="subject subjects"
+                            tal:content="subject"
+                            tal:attributes="value subject"
+                            i18n:domain="plone-metadata"
+                            i18n:translate="">dummy</option>
+                  </select>
+                  <br />
 
-                    <input type="radio"
-                        name="Subject_usage"
-                        id="Subject_or"
-                        value=""
-                        class="noborder"
-                        tal:attributes="checked python:1"/>
-                    <label for="Subject_or" i18n:translate="description_subject_or">
+                  <input type="radio"
+                         name="Subject_usage"
+                         id="Subject_or"
+                         value=""
+                         class="noborder"
+                         tal:attributes="checked python:1"/>
+                  <label for="Subject_or" i18n:translate="description_subject_or">
                     Match any
-                    </label>
-                    <br />
+                  </label>
+                  <br />
 
-                    <input type="radio"
-                        name="Subject_usage"
-                        id="Subject_and"
-                        value="and"
-                        class="noborder"
-                        tal:attributes="checked python:0"/>
-                    <label for="Subject_and" i18n:translate="description_subject_and">
+                  <input type="radio"
+                         name="Subject_usage"
+                         id="Subject_and"
+                         value="and"
+                         class="noborder"
+                         tal:attributes="checked python:0"/>
+                  <label for="Subject_and" i18n:translate="description_subject_and">
                     Match all
-                    </label>
+                  </label>
                 </div>
 
               </div>
@@ -232,49 +232,61 @@
                     </option>
                   </select>
                 </div>
-            </div>
+              </div>
 
-            <div class="field collapsible">
+              <div class="field collapsible">
                 <label for="Published" class="collapser"
                        i18n:translate="label_published">
                   Publication year
-              </label>
+                </label>
 
-              <div class="collapse">
-                <div class="formHelp" i18n:translate="help_search_published">
+                <div class="collapse">
+                  <div class="formHelp" i18n:translate="help_search_published">
                     Return items published before or after a certain year
                     (yyyy).
+                  </div>
+
+                  <input id="Published" name="Published" size="4"
+                         maxlength="4" />
+                  <br />
+
+                  <input type="radio"
+                         name="Published_range"
+                         id="Published_before"
+                         value="lower than"
+                         class="noborder"
+                         tal:attributes="checked python:1"/>
+                  <label for="Published_before"
+                         i18n:translate="description_published_before">
+                    Before
+                  </label>
+                  <br />
+
+                  <input type="radio"
+                         name="Published_range"
+                         id="Published_in"
+                         value="equal"
+                         class="noborder"
+                         tal:attributes="checked python:0"/>
+                  <label for="Published_after"
+                         i18n:translate="description_published_in">
+                    In
+                  </label>
+                  <br />
+
+                  <input type="radio"
+                         name="Published_range"
+                         id="Published_after"
+                         value="greater than"
+                         class="noborder"
+                         tal:attributes="checked python:0"/>
+                  <label for="Published_after"
+                         i18n:translate="description_published_after">
+                    After
+                  </label>
+
                 </div>
-
-                <input id="Published" name="Published" size="4"
-                maxlength="4" />
-                <br />
-
-                <input type="radio"
-                    name="Published_range"
-                    id="Published_before"
-                    value="lt"
-                    class="noborder"
-                    tal:attributes="checked python:1"/>
-                <label for="Published_before"
-                    i18n:translate="description_published_before">
-                Before
-                </label>
-                <br />
-
-                <input type="radio"
-                    name="Published_range"
-                    id="Published_after"
-                    value="gt"
-                    class="noborder"
-                    tal:attributes="checked python:0"/>
-                <label for="Published_after"
-                    i18n:translate="description_published_after">
-                After
-                </label>
-
               </div>
-            </div>
 
 
               <div class="field collapsible">
@@ -282,91 +294,91 @@
                        i18n:translate="">Sort results</label>
                 <div class="collapse">
 
-                    <div class="formHelp" i18n:translate="">
+                  <div class="formHelp" i18n:translate="">
                     Sort the Search Results based on the selected criterion
-                    </div>
+                  </div>
 
-                    <select name="sort_on"
-                            id="sort_on">
+                  <select name="sort_on"
+                          id="sort_on">
                     <option value="" i18n:translate="">
-                        Relevance
+                      Relevance
                     </option>
                     <option value="created" i18n:translate="">
-                        Creation Date
+                      Creation Date
                     </option>
                     <option value="modified" i18n:translate="">
-                        Modification Date
+                      Modification Date
                     </option>
                     <option value="title" i18n:translate="">
-                        Title
+                      Title
                     </option>
-                    </select>
+                  </select>
                 </div>
 
               </div>
 
-            <div class="formControls">
-              <input class="context allowMultiSubmit"
-                     type="submit"
-                     name="submit"
-                     value="Search"
-                     i18n:attributes="value label_search;"
-                     />
-            </div>
+              <div class="formControls">
+                <input class="context allowMultiSubmit"
+                       type="submit"
+                       name="submit"
+                       value="Search"
+                       i18n:attributes="value label_search;"
+                       />
+              </div>
             </div>
           </form>
 
-        <h1 class="documentFirstHeading esResultHeader">
-          <span i18n:translate="heading_search_results">
-            Search results
-          </span>
-          <img style="display:none" href="logo.png" alt="Loading ...."
-               tal:attributes="src string:${portal_url}/++resource++loading.gif" />
-
-          <span class="discreet">
-            &mdash;
-            <span i18n:translate="batch_x_items_matching_your_criteria">
-              <span i18n:name="number" class="searchResultsCount">0</span>
-              items matching your search terms
+          <h1 class="documentFirstHeading esResultHeader">
+            <span i18n:translate="heading_search_results">
+              Search results
             </span>
-          </span>
-        </h1>
-        <dl class="searchResults">
-        </dl>
+            <img style="display:none" href="logo.png" alt="Loading ...."
+                 tal:attributes="src string:${portal_url}/++resource++loading.gif" />
 
-        <div class="listingBar">
-
-          <span class="previous">
-            <a href="">
-              &laquo;
-              <span i18n:translate="batch_previous_x_items">
-                Previous
-                <span i18n:name="number">n</span>
-                items
+            <span class="discreet">
+              &mdash;
+              <span i18n:translate="batch_x_items_matching_your_criteria">
+                <span i18n:name="number" class="searchResultsCount">0</span>
+                items matching your search terms
               </span>
-            </a>
-          </span>
+            </span>
+          </h1>
+          <dl class="searchResults">
+          </dl>
 
-          <span class="next">
-            <a href="">
-              <span i18n:translate="batch_next_x_items">
-                Next
-                <span i18n:name="number">n</span>
-                items
-              </span>
-              &raquo;
-            </a>
-          </span>
+          <div class="listingBar">
+
+            <span class="previous">
+              <a href="">
+                &laquo;
+                <span i18n:translate="batch_previous_x_items">
+                  Previous
+                  <span i18n:name="number">n</span>
+                  items
+                </span>
+              </a>
+            </span>
+
+            <span class="next">
+              <a href="">
+                <span i18n:translate="batch_next_x_items">
+                  Next
+                  <span i18n:name="number">n</span>
+                  items
+                </span>
+                &raquo;
+              </a>
+            </span>
+
+          </div>
+
+          <div class="emptySearchResults">
+            <p><strong i18n:translate="description_no_results_found">
+                No results were found.</strong></p>
+          </div>
 
         </div>
-
-        <div class="emptySearchResults">
-          <p><strong i18n:translate="description_no_results_found">
-              No results were found.</strong></p>
-        </div>
-
       </div>
     </div>
-</div>
-</body>
+  </body>
 </html>
