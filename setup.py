@@ -1,10 +1,11 @@
 # -*- coding: utf-8 -*-
-# Copyright (c) 2012-2013 Infrae. All rights reserved.
+# Copyright (c) 2013 Infrae. All rights reserved.
 # See also LICENSE.txt
+
 from setuptools import setup, find_packages
 import os
 
-version = '1.0dev'
+version = '1.0'
 
 setup(name='collective.elasticindex',
       version=version,
@@ -26,7 +27,11 @@ setup(name='collective.elasticindex',
       include_package_data=True,
       zip_safe=True,
       install_requires=[
-        'setuptools',
         'pyes',
-      ],
+        'setuptools',
+        'zope.component',
+        'zope.formlib',
+        'zope.interface',
+        'zope.schema',
+        ],
       )
