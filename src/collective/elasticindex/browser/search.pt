@@ -30,23 +30,22 @@
                    i18n:attributes="value label_search;"/>
 
             <div id="esSearchSummaryBox" class="search-summary box">
-              <strong>Search term:</strong>
-              <span id="esSearchTerm">""</span>
-              <span id="esSearchLocation">
-                <strong>in this location:</strong><span></span>
-              </span>
-              <p i18n:translate="search_results_advanced">
-                Did you not find what you were looking for? You can refine
-                your search with
-                <strong i18n:name="advanced_search"
-                        i18n:translate="search_results_advanced_link">
-                  Advanced Search
-                </strong>.
-              </p>
-              <p>
-                <a class="esSearchOptions" href="">
-                  Fold/unfold Advanced Search options</a>
-              </p>
+                <strong>Search term:</strong>
+                <span id="esSearchTerm">""</span>
+                <span id="esSearchLocation">
+                    <strong>in this location:</strong> <span></span>
+                </span>
+                <p i18n:translate="search_results_advanced">
+                  Did you not find what you were looking for? You can refine
+                  your search with
+                  <strong i18n:name="advanced_search"
+                          i18n:translate="search_results_advanced_link">
+                    Advanced Search</strong>.
+                </p>
+                <p class="esSearchOptions">
+                  <a href="">
+                    Fold/unfold Advanced Search options</a>
+                </p>
             </div>
 
             <div class="esSearchOptions"

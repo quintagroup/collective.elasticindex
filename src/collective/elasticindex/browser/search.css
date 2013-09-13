@@ -38,15 +38,18 @@
     margin: 1em 0 1.2em;
     border: 1px solid #ddd;
     padding: 3px 10px;
-    height: 55px;
+    height: 54px;
 }
 
-.esSearchForm #esSearchSummaryBox p span {
-    margin: 2px 0;
-    padding-bottom: 17px;
-    background: url(arrowDown.png) center 21px no-repeat;
+.esSearchForm #esSearchSummaryBox p {
+    margin-bottom: 0;
 }
 
-.esSearchForm a.esSearchOptions {
+.esSearchForm #esSearchSummaryBox p.esSearchOptions {
+    padding-bottom: 31px;
+    background: url(arrowDown.png) 100px center no-repeat;
+}
+
+#content .esSearchForm p.esSearchOptions a {
     border: 0;
 }

@@ -501,7 +501,7 @@
             search.subscribe(ResultDisplayPlugin($searchResults, $emptyResults));
             search.subscribe(BatchDisplayPlugin($listingBar, scroll_search));
 
-            $form.find('a.esSearchOptions').bind('click', function (event) {
+            $form.find('p.esSearchOptions a').bind('click', function (event) {
                 options = !options;
                 $options.slideToggle();
                 event.preventDefault();
