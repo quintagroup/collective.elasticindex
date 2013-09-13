@@ -18,6 +18,10 @@
   display: none;
 }
 
+.esSearchForm div.esSearchOptions label {
+    text-transform: capitalize;
+}
+
 .esSearchForm .searchResults dt.contenttype-file {
     padding-left : 20px;
     background: url("contenttypes-sprite.png") no-repeat scroll 0px 4px transparent;
