@@ -5,7 +5,7 @@
 from setuptools import setup, find_packages
 import os
 
-version = '1.0'
+version = '1.0.1dev'
 
 setup(name='collective.elasticindex',
       version=version,
@@ -25,7 +25,7 @@ setup(name='collective.elasticindex',
       packages=find_packages('src'),
       namespace_packages=['collective'],
       include_package_data=True,
-      zip_safe=True,
+      zip_safe=False,
       install_requires=[
         'pyes',
         'setuptools',

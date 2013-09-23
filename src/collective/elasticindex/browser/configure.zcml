@@ -20,6 +20,13 @@
      permission="zope.Public"
      />
 
+  <browser:page
+     name="search.json"
+     for="*"
+     class=".search.SearchQuery"
+     permission="zope.Public"
+     />
+
   <plone:portlet
      name="elasticindex.search"
      interface=".portlet.ISearchPortlet"

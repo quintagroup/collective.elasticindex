@@ -54,6 +54,7 @@ DOCUMENT_MAPPING = {
     'modified': DATE_MAPPING,
     'publishedYear': INT_MAPPING,
     'sortableTitle': STRING_MAPPING,
+    'authorizedUsers': STRING_MAPPING,
 }
 
 def parse_url(url):
@@ -80,3 +81,8 @@ def create_index(settings):
     connection.indices.create_index_if_missing(settings.index_name)
     connection.indices.put_mapping(
         'document', {'properties' : DOCUMENT_MAPPING}, [settings.index_name])
+
+
+def delete_index(settings):
+    connection = connect(settings.server_urls)
+    connection.indices.delete_index_if_exists(settings.index_name)

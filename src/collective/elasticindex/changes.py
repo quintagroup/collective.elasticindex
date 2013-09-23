@@ -1,16 +1,18 @@
 
+from AccessControl.PermissionRole import rolesForPermissionOn
+from Products.CMFCore.CatalogTool import _mergedLocalRoles
 from Products.CMFCore.interfaces import IFolderish, IContentish
 from Products.CMFCore.utils import getToolByName
-from Products.CMFPlone.utils import safe_unicode
 from Products.CMFPlone.interfaces.siteroot import IPloneSiteRoot
-from transaction.interfaces import ISavepointDataManager, IDataManagerSavepoint
+from Products.CMFPlone.utils import safe_unicode
 from plone.i18n.normalizer.base import mapUnicode
+from transaction.interfaces import ISavepointDataManager, IDataManagerSavepoint
 from zope.component import queryUtility
 from zope.interface import implements
-import threading
-import transaction
 import logging
 import re
+import threading
+import transaction
 
 from Acquisition import aq_base
 
@@ -35,7 +37,32 @@ def get_uid(content):
         uid = content.UID()
     return uid or None
 
-def get_data(content):
+def get_security(content):
+    """Return a list of roles and users with View permission.
+    Used to filter out items you're not allowed to see.
+    """
+    allowed = set(rolesForPermissionOn('View', content))
+    # shortcut roles and only index the most basic system role if the object
+    # is viewable by either of those
+    if 'Anonymous' in allowed:
+        return ['Anonymous']
+    elif 'Authenticated' in allowed:
+        return ['Authenticated']
+    try:
+        acl_users = getToolByName(content, 'acl_users', None)
+        if acl_users is not None:
+            local_roles = acl_users._getAllLocalRoles(content)
+    except AttributeError:
+        local_roles = _mergedLocalRoles(content)
+    for user, roles in local_roles.items():
+        for role in roles:
+            if role in allowed:
+                allowed.add('user:' + user)
+    if 'Owner' in allowed:
+        allowed.remove('Owner')
+    return list(allowed)
+
+def get_data(content, security=False):
     """Return data to index in ES.
     """
     uid = get_uid(content)
@@ -55,6 +82,9 @@ def get_data(content):
             'url': content.absolute_url(),
             'author': content.Creator(),
             'content': text}
+
+    if security:
+        data['authorizedUsers'] = get_security(content)
 
     if hasattr(aq_base(content), 'pub_date_year'):
         data['publishedYear'] = getattr(content, 'pub_date_year')
@@ -173,7 +203,7 @@ class ElasticChanges(threading.local):
             return
         for item in self.should_index_container(
             list_content(content, self._is_activated)):
-            uid, data = get_data(item)
+            uid, data = get_data(item, security=self._settings.index_security)
             if data:
                 if uid in self._unindex:
                     del self._unindex[uid]
@@ -182,7 +212,7 @@ class ElasticChanges(threading.local):
     def index_content(self, content):
         if not self._is_activated():
             return
-        uid, data = get_data(content)
+        uid, data = get_data(content, security=self._settings.index_security)
         if data:
             if uid in self._unindex:
                 del self._unindex[uid]

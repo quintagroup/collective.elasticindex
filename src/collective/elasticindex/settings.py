@@ -6,9 +6,11 @@ from zope.component import getUtility
 
 class EmptySettings(object):
     only_published = True
+    index_security = False
     index_name = None
     server_urls = []
     public_server_urls = []
+    public_through_plone = False
 
 
 class SettingsAdapter(object):
@@ -24,6 +26,10 @@ class SettingsAdapter(object):
         else:
             self._properties = EmptySettings()
 
+    def get_search_urls(self):
+        return map(lambda u: '/'.join((u, self.index_name, '_search')),
+            self.public_server_urls or self.server_urls)
+
     @property
     def activated(self):
         return self._activated
@@ -36,6 +42,18 @@ class SettingsAdapter(object):
 
         def setter(self, value):
             self._properties.only_published = bool(value)
+            return value
+
+        return property(getter, setter)
+
+    @apply
+    def index_security():
+
+        def getter(self):
+            return bool(self._properties.index_security)
+
+        def setter(self, value):
+            self._properties.index_security = bool(value)
             return value
 
         return property(getter, setter)
@@ -75,5 +93,17 @@ class SettingsAdapter(object):
         def setter(self, value):
             self._properties.public_server_urls = tuple(value)
             return self._properties.public_server_urls
+
+        return property(getter, setter)
+
+    @apply
+    def public_through_plone():
+
+        def getter(self):
+            return bool(self._properties.public_through_plone)
+
+        def setter(self, value):
+            self._properties.public_through_plone = bool(value)
+            return value
 
         return property(getter, setter)

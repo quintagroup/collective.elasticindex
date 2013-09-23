@@ -11,8 +11,7 @@
     };
 
     var ElasticSearch = function($form) {
-        var search_urls = $form.data('server-urls'),
-            index_name = $form.data('index-name');
+        var search_urls = $form.data('server-urls');
         // List of callbacks during the various search stages.
         var start_query = [],
             empty_results = [],
@@ -22,8 +21,7 @@
 
         var get_url = function() {
             // Return an URL where to post the search query.
-            var index = Math.floor(Math.random() * search_urls.length);
-            return [search_urls[index], index_name, '_search'].join('/');
+            return search_urls[Math.floor(Math.random() * search_urls.length)];
         };
 
         var build_query = function(original) {

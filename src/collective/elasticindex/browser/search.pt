@@ -17,8 +17,7 @@
     <div metal:fill-slot="main">
       <div id="content-core">
         <div class="searchForm esSearchForm"
-             tal:attributes="data-server-urls view/server_urls;
-                             data-index-name view/index_name">
+             tal:attributes="data-server-urls view/server_urls">
           <form class="searchPage">
             <input type="text" placeholder="Search ..." class="searchPage"
                    title="Search Site"
