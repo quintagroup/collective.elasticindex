@@ -2,6 +2,24 @@
 (function($, JSON) {
     // Hang on in there. We have jQuery, 1.4.
     var BATCH_SIZE = 15;
+    var ALLOWED_COLON_WORDS = /(title|description|contributors|subject|content)$/i;
+
+    var remove_colons_from_query = function(query) {
+        var origin = query.split(':'),
+            cleaned = [],
+            i, match, len;
+        for (i=0, len=origin.length; i <len; i++) {
+            match = origin[i].search(ALLOWED_COLON_WORDS);
+            if (match > 0) {
+                cleaned.push(origin[i].substring(0, match));
+                cleaned.push(origin[i].substring(match).toLowerCase());
+                cleaned.push(':');
+            } else {
+                cleaned.push(origin[i]);
+            }
+        }
+        return cleaned.join('');
+    };
 
     var validate_year = function(year) {
         if (year.match(/^\d{4}$/)) {
@@ -42,7 +60,7 @@
             if (original.term) {
                 queries.push({
                     query_string : {
-                        query: original.term,
+                        query: remove_colons_from_query(original.term),
                         default_operator: "AND",
                         fields: [
                             "title^3",
