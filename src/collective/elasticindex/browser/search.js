@@ -10,7 +10,7 @@
             i, match, len;
         for (i=0, len=origin.length; i <len; i++) {
             match = origin[i].search(ALLOWED_COLON_WORDS);
-            if (match > 0) {
+            if (match > -1) {
                 cleaned.push(origin[i].substring(0, match));
                 cleaned.push(origin[i].substring(match).toLowerCase());
                 cleaned.push(':');
