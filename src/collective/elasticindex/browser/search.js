@@ -63,10 +63,9 @@
             };
             // Search criterias
             if (original.term) {
-                original.term.replace(DISALLOWED_CHARS, ' ');
                 queries.push({
                     query_string : {
-                        query: remove_colons_from_query(original.term),
+                        query: remove_colons_from_query(original.term.replace(DISALLOWED_CHARS, ' ')),
                         default_operator: "AND",
                         fields: [
                             "title^3",
