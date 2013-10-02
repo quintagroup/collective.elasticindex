@@ -63,7 +63,7 @@
             };
             // Search criterias
             if (original.term) {
-                original.replace(DISALLOWED_CHARS, ' ');
+                original.term.replace(DISALLOWED_CHARS, ' ');
                 queries.push({
                     query_string : {
                         query: remove_colons_from_query(original.term),
