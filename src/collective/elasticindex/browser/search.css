@@ -24,7 +24,7 @@
 
 .esSearchForm .searchResults dt.contenttype-file {
     padding-left : 20px;
-    background: url("contenttypes-sprite.png") no-repeat scroll 0px 4px transparent;
+    background: url("contenttypes-sprite.png") no-repeat scroll 0 4px transparent;
     line-height : 2em;
 }
 
@@ -42,7 +42,6 @@
     margin: 1em 0 1.2em;
     border: 1px solid #ddd;
     padding: 3px 10px;
-    height: 54px;
 }
 
 .esSearchForm #esSearchSummaryBox p {
@@ -50,8 +49,8 @@
 }
 
 .esSearchForm #esSearchSummaryBox p.esSearchOptions {
-    padding-bottom: 31px;
-    background: url(arrowDown.png) 100px center no-repeat;
+    padding-left:14px;
+    background: url(arrowDown.png) 0 5px no-repeat;
 }
 
 #content .esSearchForm p.esSearchOptions a {
