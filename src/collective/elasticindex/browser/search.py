@@ -4,11 +4,13 @@ from Products.CMFCore.utils import _getAuthenticatedUser
 from Products.CMFPlone.interfaces.siteroot import IPloneSiteRoot
 from Products.Five.browser import BrowserView
 from collective.elasticindex.interfaces import IElasticSettings
+from plone.memoize import ram
 from zope.component import getUtility
 from zope.traversing.browser import absoluteURL
 import json
 import random
 import urllib2
+import time
 
 
 class SearchPage(BrowserView):
@@ -32,8 +34,17 @@ class SearchPage(BrowserView):
         return super(SearchPage, self).__call__()
 
 
+def cache_user(method):
+
+    def get_cache_key(method, self, user):
+        return '#'.join((user.getId(), str(time.time() // (5 * 60 * 60))))
+
+    return ram.cache(get_cache_key)(method)
+
+
 class SearchQuery(BrowserView):
 
+    @cache_user
     def _listAllowedRolesAndUsers(self, user):
         """Makes sure the list includes the user's groups.
         """
@@ -59,6 +70,12 @@ class SearchQuery(BrowserView):
         if not isinstance(payload, dict):
             self.request.response.setStatus(400)
             return ''
+        if 'fields' in payload:
+            if (not isinstance(payload['fields'], list) or
+                'contents' in payload['fields']):
+                # Prevent people to retrieve the fulltext.
+                self.request.response.setStatus(400)
+                return ''
         authorizedFilter = {
             'terms': {
                 'authorizedUsers': self._listAllowedRolesAndUsers(
