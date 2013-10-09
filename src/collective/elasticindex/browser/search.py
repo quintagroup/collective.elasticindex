@@ -37,7 +37,7 @@ class SearchPage(BrowserView):
 def cache_user(method):
 
     def get_cache_key(method, self, user):
-        return '#'.join((user.getId(), str(time.time() // (5 * 60 * 60))))
+        return '#'.join((user.getId() or '', str(time.time() // (5 * 60 * 60))))
 
     return ram.cache(get_cache_key)(method)
 
