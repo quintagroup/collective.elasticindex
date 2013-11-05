@@ -1,6 +1,21 @@
 Changes
 =======
 
+1.1 (05/11/2013)
+----------------
+
+- Index Plone authorization in the index and provide an option to
+  redirect the queries through Plone in order to restrict the search
+  results to what the current user is allowed to see. Effectively
+  Plone will modify the search query to include a restriction on the
+  authorization.
+
+- Improve the public search page.
+
+- Improve the public search javascript to ignore special Lucene
+  characters in the query and colons except if they are before an
+  authorized term.
+
 1.0 (13/09/2013)
 ----------------
 
