@@ -20,12 +20,18 @@ def content_modified(content, event):
 
 
 def content_deleted(content, event):
+    factorytool = getToolByName(content, 'portal_factory')
+    if factorytool in content.aq_chain:
+        return
     if event.newParent is None:
         if changes.should_index_content(content):
             changes.unindex_content(content)
 
 
 def content_published(content, event):
+    factorytool = getToolByName(content, 'portal_factory')
+    if factorytool in content.aq_chain:
+        return
     if not changes.only_published:
         return
     if (event.old_state.getId() == 'published' and
