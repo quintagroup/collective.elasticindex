@@ -1,10 +1,12 @@
 Changes
 =======
 
-1.2 (unreleased)
-----------------
+1.1.1 (26/11/2013)
+------------------
 
-- ...
+- Disable completely the extension when ``portal_factory`` is in the
+  path, i.e. we have an add forms. ``portal_factory`` uses lot of
+  hacks regarding the ZODB that are not very clean.
 
 1.1 (05/11/2013)
 ----------------
