@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
-# Copyright (c) 2013 Infrae. All rights reserved.
+# Copyright (c) 2013-2014 Infrae. All rights reserved.
 # See also LICENSE.txt
 
 from setuptools import setup, find_packages
 import os
 
-version = '1.1.2dev'
+version = '1.1.2'
 
 setup(name='collective.elasticindex',
       version=version,
@@ -19,7 +19,7 @@ setup(name='collective.elasticindex',
       keywords='plone index elasticsearch search',
       author='Infrae',
       author_email='info@infrae.com',
-      url='',
+      url='https://github.com/infrae/collective.elasticindex',
       license='BSD',
       package_dir={'': 'src'},
       packages=find_packages('src'),

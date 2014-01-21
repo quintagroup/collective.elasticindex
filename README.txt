@@ -39,11 +39,13 @@ multiple Plone sites, creating a federated search that way.
 Security disclaimer
 -------------------
 
-There is no authentication or access validation while searching or
-indexing content. The purpose of this search is to be public. If you
-have private content that you don't want to be searchable or viewable
-by unauthorized people, please be sure to check the checkbox Index
-only published content in the configuration screen.
+By default is no authentication or access validation while searching
+or indexing content. The original purpose of this search is to be
+public.
+
+If you have private content that you don't want to be searchable or
+viewable by unauthorized people, please be sure to check the checkbox
+*index only published content* in the configuration screen.
 
 In addition to this ElasticSearch is not secured by default, meaning
 there is no authentication to provide in order to index or look-up
@@ -56,6 +58,14 @@ name is ``plone``, you shall allow only requests to
 proxy, be sure to configure its public URL, like
 ``http://your-public-es-url`` in the configuration screen so the
 search page knows how to contact it.
+
+However if you want to allow users to search though restricted and not
+yet published content, you can check *index security* and uncheck
+*index only published content* in the configuration screen. After
+reindexing your content, if you check *proxy search requests though
+Plone and apply security filter*, search will work on restricted and
+not yet published content, but will be slower as the queries will be
+proxied though Plone.
 
 .. _Plone: http://plone.org/
 .. _ElasticSearch: http://www.elasticsearch.org/

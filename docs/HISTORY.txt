@@ -1,7 +1,7 @@
 Changes
 =======
 
-1.1.2 (unreleased)
+1.1.2 (21/01/2014)
 ------------------
 
 - Fix a stupid bug when a document that is unindex get reindex inside
