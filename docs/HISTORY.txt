@@ -1,10 +1,11 @@
 Changes
 =======
 
-1.2 (unreleased)
-----------------
+1.1.2 (unreleased)
+------------------
 
-- ...
+- Fix a stupid bug when a document that is unindex get reindex inside
+  the same transaction.
 
 1.1.1 (26/11/2013)
 ------------------

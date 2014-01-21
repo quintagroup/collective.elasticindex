@@ -206,7 +206,7 @@ class ElasticChanges(threading.local):
             uid, data = get_data(item, security=self._settings.index_security)
             if data:
                 if uid in self._unindex:
-                    del self._unindex[uid]
+                    self._unindex.remove(uid)
                 self._index[uid] = data
 
     def index_content(self, content):
@@ -215,7 +215,7 @@ class ElasticChanges(threading.local):
         uid, data = get_data(content, security=self._settings.index_security)
         if data:
             if uid in self._unindex:
-                del self._unindex[uid]
+                self._unindex.remove(uid)
             self._index[uid] = data
 
     def unindex_content(self, content):
