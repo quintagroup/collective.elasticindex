@@ -1,7 +1,7 @@
 Changes
 =======
 
-1.2 (unreleased)
+1.2 (28/01/2014)
 ----------------
 
 - Add an option to rewrite the domain name in the URL of indexed
