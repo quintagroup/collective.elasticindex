@@ -5,6 +5,7 @@
   <property name="only_published" type="boolean" purge="False"></property>
   <property name="index_security" type="boolean" purge="False"></property>
   <property name="index_name" type="string" purge="False"></property>
+  <property name="normalize_domain_name" type="string" purge="False"></property>
   <property name="server_urls" type="lines" purge="False"></property>
   <property name="public_server_urls" type="lines" purge="False"></property>
   <property name="public_through_plone" type="boolean" purge="False"></property>

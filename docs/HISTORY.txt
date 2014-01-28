@@ -4,7 +4,8 @@ Changes
 1.2 (unreleased)
 ----------------
 
-- ...
+- Add an option to rewrite the domain name in the URL of indexed
+  documents.
 
 1.1.2 (21/01/2014)
 ------------------

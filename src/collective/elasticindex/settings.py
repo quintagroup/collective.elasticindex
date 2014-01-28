@@ -11,6 +11,7 @@ class EmptySettings(object):
     server_urls = []
     public_server_urls = []
     public_through_plone = False
+    normalize_domain_name = None
 
 
 class SettingsAdapter(object):
@@ -69,6 +70,21 @@ class SettingsAdapter(object):
         def setter(self, value):
             self._properties.index_name = value
             return value
+
+        return property(getter, setter)
+
+    @apply
+    def normalize_domain_name():
+
+        def getter(self):
+            return self._properties.normalize_domain_name or None
+
+        def setter(self, value):
+            if value:
+                self._properties.normalize_domain_name = value
+            else:
+                self._properties.normalize_domain_name = None
+            return self._properties.normalize_domain_name
 
         return property(getter, setter)
 

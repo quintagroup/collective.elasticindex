@@ -1,5 +1,11 @@
 
+import logging
+import re
+import threading
+import urlparse
+
 from AccessControl.PermissionRole import rolesForPermissionOn
+from Acquisition import aq_base
 from Products.CMFCore.CatalogTool import _mergedLocalRoles
 from Products.CMFCore.interfaces import IFolderish, IContentish
 from Products.CMFCore.utils import getToolByName
@@ -9,12 +15,7 @@ from plone.i18n.normalizer.base import mapUnicode
 from transaction.interfaces import ISavepointDataManager, IDataManagerSavepoint
 from zope.component import queryUtility
 from zope.interface import implements
-import logging
-import re
-import threading
 import transaction
-
-from Acquisition import aq_base
 
 from collective.elasticindex.interfaces import IElasticSettings
 from collective.elasticindex.utils import connect
@@ -62,7 +63,7 @@ def get_security(content):
         allowed.remove('Owner')
     return list(allowed)
 
-def get_data(content, security=False):
+def get_data(content, security=False, domain=None):
     """Return data to index in ES.
     """
     uid = get_uid(content)
@@ -73,13 +74,18 @@ def get_data(content, security=False):
         text = content.SearchableText()
     except:
         text = title
+    url = content.absolute_url()
+    if domain:
+        parts = urlparse.urlparse(url)
+        url = urlparse.urlunparse((parts[0], domain) + parts[2:])
+
     data = {'title': title,
             'metaType': content.portal_type,
             'sortableTitle': sortable_string(title),
             'description': content.Description(),
             'subject': content.Subject(),
             'contributors': content.Contributors(),
-            'url': content.absolute_url(),
+            'url': url,
             'author': content.Creator(),
             'content': text}
 
@@ -203,7 +209,8 @@ class ElasticChanges(threading.local):
             return
         for item in self.should_index_container(
             list_content(content, self._is_activated)):
-            uid, data = get_data(item, security=self._settings.index_security)
+            uid, data = get_data(item, security=self._settings.index_security,
+                                 domain=self._settings.normalize_domain_name)
             if data:
                 if uid in self._unindex:
                     self._unindex.remove(uid)
@@ -212,7 +219,8 @@ class ElasticChanges(threading.local):
     def index_content(self, content):
         if not self._is_activated():
             return
-        uid, data = get_data(content, security=self._settings.index_security)
+        uid, data = get_data(content, security=self._settings.index_security,
+                             domain=self._settings.normalize_domain_name)
         if data:
             if uid in self._unindex:
                 self._unindex.remove(uid)
