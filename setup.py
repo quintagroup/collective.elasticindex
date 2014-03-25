@@ -5,7 +5,7 @@
 from setuptools import setup, find_packages
 import os
 
-version = '1.3dev'
+version = '1.2.1'
 
 setup(name='collective.elasticindex',
       version=version,

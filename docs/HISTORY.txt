@@ -1,8 +1,8 @@
 Changes
 =======
 
-1.3 (unreleased)
-----------------
+1.2.1 (25/03/2014)
+------------------
 
 - Update javascript so it longer strips double quotes away.
 
