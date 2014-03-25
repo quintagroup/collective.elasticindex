@@ -4,10 +4,10 @@
     var BATCH_SIZE = 15;
     var ALLOWED_COLON_WORDS = /(title|description|contributors|subject|content)$/i;
 
-    // Lucene special chars: && || ! ( ) { } [ ] ^ " \
+    // Lucene special chars: && || ! ( ) { } [ ] ^ \
     // Following regex contains Lucene special chars and punctuation chars (the colon it's treated separately).
     // Chars with a "meaning" in regex syntax have been escaped.
-    var DISALLOWED_CHARS = /(&|\||!|\(|\)|\{|\}|\[|\]|\^|"|\\|;|,|\.|\/|<|>)/g;
+    var DISALLOWED_CHARS = /(&|\||!|\(|\)|\{|\}|\[|\]|\^|\\|;|,|\.|\/|<|>)/g;
 
     var remove_colons_from_query = function(query) {
         var origin = query.split(':'),
