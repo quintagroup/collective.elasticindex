@@ -7,6 +7,11 @@ import os
 
 version = '1.3dev'
 
+tests_require = [
+    'Products.PloneTestCase',
+    'mock',
+]
+
 setup(name='collective.elasticindex',
       version=version,
       description="Index Plone content in Elastic Search",
@@ -27,11 +32,23 @@ setup(name='collective.elasticindex',
       include_package_data=True,
       zip_safe=False,
       install_requires=[
-        'pyes',
-        'setuptools',
-        'zope.component',
-        'zope.formlib',
-        'zope.interface',
-        'zope.schema',
+          'Acquisition',
+          'Products.CMFCore',
+          'Products.CMFPlone',
+          'Products.statusmessages',
+          'plone.app.controlpanel',
+          'plone.app.portlets',
+          'plone.portlets',
+          'pyes',
+          'setuptools',
+          'transaction',
+          'zope.component',
+          'zope.formlib',
+          'zope.i18nmessageid',
+          'zope.interface',
+          'zope.schema',
+          'zope.traversing',
         ],
+      tests_require = tests_require,
+      extras_require = {'test': tests_require},
       )

@@ -1,37 +1,44 @@
+import functools
 
 from collective.elasticindex.changes import changes
 from Products.CMFCore.utils import getToolByName
 
 
+def ignore_factorytool(func):
+    """Don't call the subscriber if we are in context of a portal_factory.
+    """
+
+    @functools.wraps(func)
+    def subscriber(content, event):
+        factorytool = getToolByName(content, 'portal_factory', None)
+        if factorytool is None or factorytool in content.aq_chain:
+            return
+        return func(content, event)
+
+    return subscriber
+
+
+@ignore_factorytool
 def content_added(content, event):
-    factorytool = getToolByName(content, 'portal_factory')
-    if factorytool in content.aq_chain:
-        return
     if changes.should_index_content(content):
         changes.index_content(content)
 
 
+@ignore_factorytool
 def content_modified(content, event):
-    factorytool = getToolByName(content, 'portal_factory')
-    if factorytool in content.aq_chain:
-        return
     if changes.should_index_content(content):
         changes.index_content(content)
 
 
+@ignore_factorytool
 def content_deleted(content, event):
-    factorytool = getToolByName(content, 'portal_factory')
-    if factorytool in content.aq_chain:
-        return
     if event.newParent is None:
         if changes.should_index_content(content):
             changes.unindex_content(content)
 
 
+@ignore_factorytool
 def content_published(content, event):
-    factorytool = getToolByName(content, 'portal_factory')
-    if factorytool in content.aq_chain:
-        return
     if not changes.only_published:
         return
     if (event.old_state.getId() == 'published' and
