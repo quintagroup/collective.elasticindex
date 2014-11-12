@@ -4,7 +4,7 @@
   <head>
     <metal:block fill-slot="javascript_head_slot">
       <script type="text/javascript"
-              tal:attributes="src string:${portal_url}/++resource++search.js">
+              tal:attributes="src string:${portal_url}/++resource++search-es.js">
       </script>
     </metal:block>
     <metal:block fill-slot="style_slot">
