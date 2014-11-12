@@ -7,3 +7,11 @@
 *.pyc
 *.egg-info
 EGG-INFO
+.installed.cfg
+bin/
+develop-eggs/
+include/
+lib/
+local/
+parts/
+var/
