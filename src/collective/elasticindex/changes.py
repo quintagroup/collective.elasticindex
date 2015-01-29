@@ -133,19 +133,20 @@ def list_content(content, callback):
 
 
 class ElasticSavepoint(object):
-    implements(ISavepointDataManager)
+    implements(IDataManagerSavepoint)
 
     def __init__(self, manager, index, unindex):
+        self.manager = manager 
         self._index = index.copy()
         self._unindex = set(unindex)
 
-    def restore(self):
+    def rollback(self):
         self.manager._index = self._index
         self.manager._unindex = self._unindex
 
 
 class ElasticChanges(threading.local):
-    implements(IDataManagerSavepoint)
+    implements(ISavepointDataManager)
 
     def __init__(self, manager):
         self.manager = manager
