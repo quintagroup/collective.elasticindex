@@ -45,6 +45,11 @@
      />
   <subscriber
      handler=".subscribers.content_modified"
+     for="Products.CMFCore.interfaces.IContentish
+          plone.app.iterate.interfaces.IAfterCheckinEvent"
+     />
+  <subscriber
+     handler=".subscribers.content_modified"
      for="Products.CMFCore.interfaces.IFolderish
           OFS.interfaces.IObjectClonedEvent"
      />
@@ -52,6 +57,11 @@
      handler=".subscribers.content_modified"
      for="Products.CMFCore.interfaces.IFolderish
           zope.lifecycleevent.interfaces.IObjectModifiedEvent"
+     />
+  <subscriber
+     handler=".subscribers.content_modified"
+     for="Products.CMFCore.interfaces.IFolderish
+          plone.app.iterate.interfaces.IAfterCheckinEvent"
      />
 
   <!-- Content added -->
