@@ -4,7 +4,7 @@ Changes
 1.2.3 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- Fix indexation after checkin from plone.app.iterate.
 
 
 1.2.2 (2015-01-29)
