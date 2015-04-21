@@ -4,7 +4,7 @@ Changes
 1.2.4 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- More logging while indexing.
 
 
 1.2.3 (2015-02-03)

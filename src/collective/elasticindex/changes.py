@@ -118,11 +118,14 @@ def list_content(content, callback):
             yield child
 
     count = 0
+    total = 0
     if IFolderish.providedBy(content):
         for child in recurse(content):
             yield child
             count += 1
+            total += 1
             if count > 1000:
+                logger.info('{0} items indexed'.format(total))
                 transaction.commit()
                 content._p_jar.cacheGC()
                 callback()
@@ -268,8 +271,8 @@ class ElasticChanges(threading.local):
                         id=uid,
                         bulk=True)
                 except:
-                    logger.exception(
-                        'Error while indexing document in Elasticsearch')
+                    errormsg = 'Error while indexing document {0} in Elasticsearch'.format(uid)
+                    logger.exception(errormsg)
             for uid in self._unindex:
                 try:
                     self._connection.delete(
@@ -278,8 +281,8 @@ class ElasticChanges(threading.local):
                         uid,
                         bulk=True)
                 except:
-                    logger.exception(
-                        'Error while indexing document in Elasticsearch')
+                    errormsg = 'Error while unindexing document {0} in Elasticsearch'.format(uid)
+                    logger.exception(errormsg)
             if self._index or self._unindex:
                 try:
                     self._connection.flush_bulk(True)
