@@ -1,7 +1,7 @@
 Changes
 =======
 
-1.2.4 (unreleased)
+1.2.4 (2015-04-21)
 ------------------
 
 - More logging while indexing.
