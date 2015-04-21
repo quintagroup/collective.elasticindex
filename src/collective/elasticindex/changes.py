@@ -124,7 +124,7 @@ def list_content(content, callback):
             yield child
             count += 1
             total += 1
-            if count > 1000:
+            if count > 200:
                 logger.info('{0} items indexed'.format(total))
                 transaction.commit()
                 content._p_jar.cacheGC()

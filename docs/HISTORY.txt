@@ -4,7 +4,7 @@ Changes
 1.2.5 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- Less items per commit while indexing
 
 
 1.2.4 (2015-04-21)
