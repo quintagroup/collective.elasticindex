@@ -43,6 +43,7 @@ def get_security(content):
     Used to filter out items you're not allowed to see.
     """
     allowed = set(rolesForPermissionOn('View', content))
+    acl_users = getToolByName(content, 'acl_users', None)
     # shortcut roles and only index the most basic system role if the object
     # is viewable by either of those
     if 'Anonymous' in allowed:
@@ -50,15 +51,18 @@ def get_security(content):
     elif 'Authenticated' in allowed:
         return ['Authenticated']
     try:
-        acl_users = getToolByName(content, 'acl_users', None)
         if acl_users is not None:
             local_roles = acl_users._getAllLocalRoles(content)
     except AttributeError:
         local_roles = _mergedLocalRoles(content)
-    for user, roles in local_roles.items():
+    for identifier, roles in local_roles.items():
         for role in roles:
             if role in allowed:
-                allowed.add('user:' + user)
+                if acl_users.getGroup(identifier):
+                    usertype = 'group'
+                else:
+                    usertype = 'user'
+                allowed.add('{}:{}'.format(usertype, identifier))
     if 'Owner' in allowed:
         allowed.remove('Owner')
     return list(allowed)
@@ -197,8 +201,7 @@ class ElasticChanges(threading.local):
             return False
         if self._get_status is None:
             return True
-        return self._get_status(
-            content, 'review_state', default='nope') == 'published'
+        return True
 
     def should_index_container(self, contents):
         if self._is_activated():
