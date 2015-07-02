@@ -22,12 +22,12 @@
 
   <!-- Content published -->
   <subscriber
-     handler=".subscribers.content_published"
+     handler=".subscribers.content_modified"
      for="Products.CMFCore.interfaces.IContentish
           Products.DCWorkflow.interfaces.IAfterTransitionEvent"
      />
   <subscriber
-     handler=".subscribers.content_published"
+     handler=".subscribers.content_modified"
      for="Products.CMFCore.interfaces.IFolderish
           Products.DCWorkflow.interfaces.IAfterTransitionEvent"
      />
@@ -38,6 +38,7 @@
      for="Products.CMFCore.interfaces.IContentish
           OFS.interfaces.IObjectClonedEvent"
      />
+
   <subscriber
      handler=".subscribers.content_modified"
      for="Products.CMFCore.interfaces.IContentish
