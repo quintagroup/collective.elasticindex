@@ -14,10 +14,11 @@ from Products.CMFPlone.utils import safe_unicode
 from plone.i18n.normalizer.base import mapUnicode
 from transaction.interfaces import ISavepointDataManager, IDataManagerSavepoint
 from zope.component import queryUtility
+from zope.component import getAdapters
 from zope.interface import implements
 import transaction
 
-from collective.elasticindex.interfaces import IElasticSettings
+from collective.elasticindex.interfaces import IElasticSettings, IElasticIndex
 from collective.elasticindex.utils import connect
 
 logger = logging.getLogger('collective.elasticindex')
@@ -75,9 +76,9 @@ def get_data(content, security=False, domain=None):
         return None, None
     title = content.Title()
     try:
-        text = content.SearchableText()
+        content_text = content.SearchableText()
     except:
-        text = title
+        content_text = title
     url = content.absolute_url()
     if domain:
         parts = urlparse.urlparse(url)
@@ -91,7 +92,7 @@ def get_data(content, security=False, domain=None):
             'contributors': content.Contributors(),
             'url': url,
             'author': content.Creator(),
-            'content': text}
+            'content': content_text}
 
     if security:
         data['authorizedUsers'] = get_security(content)
@@ -107,6 +108,8 @@ def get_data(content, security=False, domain=None):
     if modified is not (None, 'None'):
         data['modified'] = modified.strftime('%Y-%m-%dT%H:%M:%S')
 
+    for name, adapter in getAdapters((content,), IElasticIndex):
+        data[name] = adapter
     return uid, data
 
 def list_content(content, callback):
@@ -143,7 +146,7 @@ class ElasticSavepoint(object):
     implements(IDataManagerSavepoint)
 
     def __init__(self, manager, index, unindex):
-        self.manager = manager 
+        self.manager = manager
         self._index = index.copy()
         self._unindex = set(unindex)
 

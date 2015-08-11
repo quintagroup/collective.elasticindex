@@ -88,6 +88,21 @@
      for="Products.CMFCore.interfaces.IFolderish
           OFS.interfaces.IObjectWillBeRemovedEvent"
      />
+     
+    <adapter
+        for="zope.interface.Interface"
+        provides=".interfaces.IElasticMapping"
+        factory=".adapters.richtext_mapping"
+        name="text"
+        />
+
+    <adapter
+        for="plone.app.contenttypes.behaviors.richtext.IRichText"
+        provides=".interfaces.IElasticIndex"
+        factory=".adapters.richtext_index"
+        name="text"
+        />
+    
   <include package=".browser" />
 
 </configure>
