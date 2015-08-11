@@ -1,6 +1,10 @@
 
 import pyes
 import urlparse
+from zope.interface import Interface
+from zope.component import getAdapters
+from collective.elasticindex.interfaces import IElasticMapping
+from copy import deepcopy
 
 ANALYZED_STRING_MAPPING = {
     'index': 'analyzed',
@@ -79,8 +83,13 @@ def connect(urls):
 def create_index(settings):
     connection = connect(settings.server_urls)
     connection.indices.create_index_if_missing(settings.index_name)
+    document_mapping = deepcopy(DOCUMENT_MAPPING)
+
+    for name, adapter in getAdapters((Interface,), IElasticMapping):
+        document_mapping[name] = adapter
+        
     connection.indices.put_mapping(
-        'document', {'properties' : DOCUMENT_MAPPING}, [settings.index_name])
+        'document', {'properties' : document_mapping}, [settings.index_name])
 
 
 def delete_index(settings):

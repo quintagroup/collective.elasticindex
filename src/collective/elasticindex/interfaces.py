@@ -43,3 +43,16 @@ class IElasticSettings(Interface):
 
     def get_search_urls():
         pass
+
+
+class IElasticIndex(Interface):
+
+    def index():
+        pass
+
+
+
+class IElasticMapping(Interface):
+
+    def index():
+        pass
